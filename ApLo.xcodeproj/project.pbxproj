@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CB09672B14B4DCA4002D3B48 /* ApLoDocumentWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = CB09672A14B4DCA4002D3B48 /* ApLoDocumentWindow.m */; };
 		CB0B292D14B3C2A2007E86A1 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB0B292C14B3C2A2007E86A1 /* Cocoa.framework */; };
 		CB0B294014B3C2A2007E86A1 /* ApLoDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = CB0B293F14B3C2A2007E86A1 /* ApLoDocument.m */; };
 		CB0B294D14B3C2B4007E86A1 /* ApLo.icns in Resources */ = {isa = PBXBuildFile; fileRef = CB0B294C14B3C2B4007E86A1 /* ApLo.icns */; };
@@ -21,6 +22,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		CB09672914B4DCA4002D3B48 /* ApLoDocumentWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApLoDocumentWindow.h; sourceTree = "<group>"; };
+		CB09672A14B4DCA4002D3B48 /* ApLoDocumentWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ApLoDocumentWindow.m; sourceTree = "<group>"; };
 		CB0B292814B3C2A2007E86A1 /* ApLo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ApLo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CB0B292C14B3C2A2007E86A1 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		CB0B292F14B3C2A2007E86A1 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -105,6 +108,8 @@
 			children = (
 				CB0B293E14B3C2A2007E86A1 /* ApLoDocument.h */,
 				CB0B293F14B3C2A2007E86A1 /* ApLoDocument.m */,
+				CB09672914B4DCA4002D3B48 /* ApLoDocumentWindow.h */,
+				CB09672A14B4DCA4002D3B48 /* ApLoDocumentWindow.m */,
 			);
 			path = ApLo;
 			sourceTree = "<group>";
@@ -216,6 +221,7 @@
 			files = (
 				CB0B294014B3C2A2007E86A1 /* ApLoDocument.m in Sources */,
 				CB0B297014B3C949007E86A1 /* main.m in Sources */,
+				CB09672B14B4DCA4002D3B48 /* ApLoDocumentWindow.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -345,6 +351,7 @@
 				CB0B294B14B3C2A2007E86A1 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
