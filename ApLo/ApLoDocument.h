@@ -15,13 +15,21 @@
 	
 	PROP(assign,IBOutlet) WebView	*aploWebView;
 	PROP(copy) NSString				*identifier;
+	
+	PROP(copy,nonatomic) NSString	*searchString;
+	PROP(assign) NSInteger			numMatches;
+	
+	//VPROP(assign) BOOL			searchButtonsEnabled;
 }
 @property (assign) IBOutlet	WebView		*aploWebView;
 @property (copy)				NSString	*identifier;
+@property (copy,nonatomic)		NSString	*searchString;
+@property (assign)				NSInteger	numMatches;
+@property (assign)				BOOL		searchButtonsEnabled;
 
 //*****************************************************************************
 // Factory methods
-//*****************************************************************************init
+//*****************************************************************************
 - (id)init;
 - (void)dealloc;
 
@@ -38,6 +46,17 @@
 // Action methods
 //*****************************************************************************
 - (IBAction)clear:sender;
+
+//*****************************************************************************
+// Search support
+//*****************************************************************************
+- (void)setSearchString:(NSString *)newSearchString;
+- (IBAction)findNext:sender;
+- (IBAction)findPrevious:sender;
+- (IBAction)findButtonClicked:sender;
+- (void)findWithJS:(NSString *)javascript;
+- (BOOL)searchButtonsEnabled;
++ (NSSet *)keyPathsForValuesAffectingSearchButtonsEnabled;
 
 //*****************************************************************************
 // Implementation
@@ -59,6 +78,9 @@
 //*****************************************************************************
 // Synthesized Accessors
 //*****************************************************************************
+// @synthesize searchString;
+// @synthesize numMatches;
+// @dynamic searchButtonsEnabled;
 // @synthesize aploWebView;
 // @synthesize identifier;
 

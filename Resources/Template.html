@@ -24,8 +24,103 @@
 			span.SyslogWarning {
 				color: Chocolate;
 			}
-		}
+			span.ApLoSearchHighlight {
+				background-color: yellow;
+			}
 		</style>
+		<script type="text/javascript">
+			function ApLoHighlightString(searchString)
+			{
+			    ApLoRemoveHighlights();
+			    ApLoAddHighlights(document.body,searchString.toLowerCase());
+				
+				// (document.body.style.display='none') 
+				// (document.body.style.display='block').
+				
+				return ApLoNumMatches;
+			}
+			function ApLoRemoveHighlights()
+			{
+			    ApLoNumMatches=0;
+			    ApLoRemoveHighlightsIn(document.body);
+				
+				// (document.body.style.display='none') 
+				// (document.body.style.display='block').
+			}
+			function ApLoRemoveHighlightsIn(element)
+			{
+				if(element && element.nodeType==1)
+				{
+					if(element.getAttribute("class")=="ApLoSearchHighlight")
+					{
+						var text=element.removeChild(element.firstChild);
+						element.parentNode.insertBefore(text,element);
+						element.parentNode.removeChild(element);
+						
+						return true;
+					}
+					else
+					{
+						var normalize=false;
+						for(var i=element.childNodes.length-1;i>=0;i--)
+						{
+							if(ApLoRemoveHighlightsIn(element.childNodes[i]))
+							{
+								normalize=true;
+							}
+						}
+						if(normalize)
+						{
+							element.normalize();
+						}
+					}
+				}
+			}
+			function ApLoAddHighlights(element,searchString)
+			{
+				if(!element) return false;
+				if(element.nodeType==3)
+				{
+					// Text node
+					while(true)
+					{
+						var value=element.nodeValue;
+						var idx=value.toLowerCase().indexOf(searchString);
+						
+						if(idx<0) break;             
+						
+						var span=document.createElement("span");
+						var text=document.createTextNode(value.substr(idx,searchString.length));
+						span.appendChild(text);
+						span.setAttribute("class","ApLoSearchHighlight");
+						text=document.createTextNode(value.substr(idx+searchString.length));
+						element.deleteData(idx,value.length-idx);
+						var next=element.nextSibling;
+						element.parentNode.insertBefore(span,next);
+						element.parentNode.insertBefore(text,next);
+						element=text;
+						ApLoNumMatches++;
+					}
+				}
+				else if(element.nodeType==1)
+				{
+					// Element node
+					if(element.style.display!="none" && element.nodeName.toLowerCase()!='select')
+					{
+						for(var i=element.childNodes.length-1;i>=0;i--)
+						{
+							ApLoAddHighlights(element.childNodes[i],searchString);
+						}
+					}
+				}
+			}
+			function ApLoFindPrevious()
+			{
+			}
+			function ApLoFindNext()
+			{
+			}
+		</script>
 	</head>
 	<body>
 		<div class="document">

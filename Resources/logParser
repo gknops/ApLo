@@ -50,8 +50,8 @@
 	my %lu=();
 	
 	# open(IN,"syslog -w all -k Sender Seq $AppID|")
-	# open(IN,"syslog -k Sender Seq $AppID|")
-	open(IN,"syslog -w 0 -k Sender Seq $AppID|")
+	open(IN,"syslog -k Sender Seq $AppID|")
+	# open(IN,"syslog -w 0 -k Sender Seq $AppID|")
 		or die("Can't open 'syslog -w all -k Sender Seq $AppID|' for read: $!\n");
 	while(<IN>)
 	{

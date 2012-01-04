@@ -93,6 +93,64 @@
 }
 
 //*****************************************************************************
+// Search support
+//*****************************************************************************
+- (void)setSearchString:(NSString *)newSearchString {
+	
+	newSearchString=[newSearchString stringByReplacingOccurrencesOfString:@"'" withString:@"\\'"];
+	
+	id old=searchString;
+	searchString=[newSearchString copy];
+	[old release];
+	
+	if(!searchString || [searchString length]==0)
+	{
+		[aploWebView stringByEvaluatingJavaScriptFromString:@"ApLoRemoveHighlights"];
+		
+		return;
+	}
+	
+    NSString	*result=[aploWebView stringByEvaluatingJavaScriptFromString:
+		[NSString stringWithFormat:@"ApLoHighlightString('%@')",searchString]
+	];
+	
+	self.numMatches=[result integerValue];
+	
+	[aploWebView setNeedsDisplay:YES];
+}
+- (IBAction)findNext:sender {
+	
+	[self findWithJS:@"ApLoFindNext()"];
+}
+- (IBAction)findPrevious:sender {
+	
+	[self findWithJS:@"ApLoFindPrevious()"];
+}
+- (IBAction)findButtonClicked:sender {
+	
+	[self findWithJS:([sender selectedSegment])?@"ApLoFindNext()":@"ApLoFindPrevious()"];
+}
+- (void)findWithJS:(NSString *)javascript {
+	
+	if(self.numMatches<2)
+	{
+		NSBeep();
+		
+		return;
+	}
+	
+	[aploWebView stringByEvaluatingJavaScriptFromString:javascript];
+}
+- (BOOL)searchButtonsEnabled {
+	
+	return (self.numMatches>1);
+}
++ (NSSet *)keyPathsForValuesAffectingSearchButtonsEnabled {
+	
+	return [NSSet setWithObjects:@"numMatches",nil];
+}
+
+//*****************************************************************************
 // Implementation
 //*****************************************************************************
 - (void)startMonitoring:sender {
@@ -214,6 +272,9 @@
 //*****************************************************************************
 // Synthesized Accessors
 //*****************************************************************************
+@synthesize searchString;
+@synthesize numMatches;
+@dynamic searchButtonsEnabled;
 @synthesize aploWebView;
 @synthesize identifier;
 
