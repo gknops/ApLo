@@ -1,0 +1,49 @@
+// 
+// ApLo-Prefix.pch
+// ApLo - Misc (BITart)
+// 
+// Created by Gerd Knops on 01/03/12.
+// Copyright 2012 BITart Consulting, Gerd Knops. All rights reserved.
+//
+
+#ifdef __OBJC__
+	#import <Cocoa/Cocoa.h>
+#endif
+
+#import <WebKit/WebKit.h>
+
+//*****************************************************************************
+// Macros
+//*****************************************************************************
+#ifdef __clang__
+	#define _CMD NSStringFromSelector(_cmd)
+#else
+	#define _CMD [NSString stringWithFormat:@"%s",_cmd]
+#endif
+
+#define IS_MAIN_QUEUE (dispatch_get_current_queue()==dispatch_get_main_queue())
+
+#define NOARCHIVE
+#define PROP(...)
+#define VPROP(...)	//
+
+//*****************************************************************************
+// Logging
+//*****************************************************************************
+#ifdef DEBUG
+	#define CONFIG_DEBUG
+#endif
+#ifdef CONFIG_DEBUG
+	#define	DLog(format,...) NSLog(@"%s:%d: "format,__FILE__,__LINE__,##__VA_ARGS__);
+#else
+	#define DLog(...)
+#endif
+
+#define	ERRLog(format,...) NSLog(@"%s:%d: ERROR: "format,__FILE__,__LINE__,##__VA_ARGS__);
+#define	ASSERTLog(format,...) NSLog(@"%s:%d: ASSERTION: "format,__FILE__,__LINE__,##__VA_ARGS__);
+
+//*****************************************************************************
+// Assertions
+//*****************************************************************************
+#define ASSERT(cond,format,...)	if(!(cond)) { ASSERTLog(format,##__VA_ARGS__); }
+#define SUBCLASS_RESPONSIBILITY ASSERT(NO,@"%@ failed to implement %@!",NSStringFromClass([self class]),_CMD);

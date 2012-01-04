@@ -1,0 +1,352 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		CB0B292D14B3C2A2007E86A1 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB0B292C14B3C2A2007E86A1 /* Cocoa.framework */; };
+		CB0B294014B3C2A2007E86A1 /* ApLoDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = CB0B293F14B3C2A2007E86A1 /* ApLoDocument.m */; };
+		CB0B294D14B3C2B4007E86A1 /* ApLo.icns in Resources */ = {isa = PBXBuildFile; fileRef = CB0B294C14B3C2B4007E86A1 /* ApLo.icns */; };
+		CB0B295A14B3C71F007E86A1 /* ApLoDocument.xib in Resources */ = {isa = PBXBuildFile; fileRef = CB0B295214B3C71F007E86A1 /* ApLoDocument.xib */; };
+		CB0B295B14B3C71F007E86A1 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = CB0B295414B3C71F007E86A1 /* Credits.rtf */; };
+		CB0B295C14B3C71F007E86A1 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = CB0B295614B3C71F007E86A1 /* InfoPlist.strings */; };
+		CB0B295D14B3C71F007E86A1 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = CB0B295814B3C71F007E86A1 /* MainMenu.xib */; };
+		CB0B297014B3C949007E86A1 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = CB0B296814B3C949007E86A1 /* main.m */; };
+		CB0B297214B3C9DD007E86A1 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB0B297114B3C9DD007E86A1 /* WebKit.framework */; };
+		CB0B297414B3CA31007E86A1 /* Template.html in Resources */ = {isa = PBXBuildFile; fileRef = CB0B297314B3CA31007E86A1 /* Template.html */; };
+		CB0B297614B3D974007E86A1 /* logParser in Resources */ = {isa = PBXBuildFile; fileRef = CB0B297514B3D974007E86A1 /* logParser */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		CB0B292814B3C2A2007E86A1 /* ApLo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ApLo.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		CB0B292C14B3C2A2007E86A1 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		CB0B292F14B3C2A2007E86A1 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
+		CB0B293014B3C2A2007E86A1 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		CB0B293114B3C2A2007E86A1 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		CB0B293E14B3C2A2007E86A1 /* ApLoDocument.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ApLoDocument.h; sourceTree = "<group>"; };
+		CB0B293F14B3C2A2007E86A1 /* ApLoDocument.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ApLoDocument.m; sourceTree = "<group>"; };
+		CB0B294C14B3C2B4007E86A1 /* ApLo.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = ApLo.icns; sourceTree = "<group>"; };
+		CB0B295314B3C71F007E86A1 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = Resources/en.lproj/ApLoDocument.xib; sourceTree = "<group>"; };
+		CB0B295514B3C71F007E86A1 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = en; path = Resources/en.lproj/Credits.rtf; sourceTree = "<group>"; };
+		CB0B295714B3C71F007E86A1 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = Resources/en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		CB0B295914B3C71F007E86A1 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = Resources/en.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		CB0B295F14B3C949007E86A1 /* ApLo-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "ApLo-Info.plist"; sourceTree = "<group>"; };
+		CB0B296014B3C949007E86A1 /* ApLo-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ApLo-Prefix.pch"; sourceTree = "<group>"; };
+		CB0B296214B3C949007E86A1 /* AplLo.acorn */ = {isa = PBXFileReference; lastKnownFileType = file; path = AplLo.acorn; sourceTree = "<group>"; };
+		CB0B296314B3C949007E86A1 /* AplLo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = AplLo.png; sourceTree = "<group>"; };
+		CB0B296414B3C949007E86A1 /* application.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = application.tiff; sourceTree = "<group>"; };
+		CB0B296514B3C949007E86A1 /* ApplicationIconTools.acorn */ = {isa = PBXFileReference; lastKnownFileType = file; path = ApplicationIconTools.acorn; sourceTree = "<group>"; };
+		CB0B296614B3C949007E86A1 /* Console.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = Console.icns; sourceTree = "<group>"; };
+		CB0B296714B3C949007E86A1 /* GenericApplicationIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = GenericApplicationIcon.icns; sourceTree = "<group>"; };
+		CB0B296814B3C949007E86A1 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		CB0B297114B3C9DD007E86A1 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
+		CB0B297314B3CA31007E86A1 /* Template.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; name = Template.html; path = Resources/Template.html; sourceTree = "<group>"; };
+		CB0B297514B3D974007E86A1 /* logParser */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; name = logParser; path = Resources/logParser; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		CB0B292514B3C2A2007E86A1 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CB0B292D14B3C2A2007E86A1 /* Cocoa.framework in Frameworks */,
+				CB0B297214B3C9DD007E86A1 /* WebKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		CB0B291D14B3C2A2007E86A1 = {
+			isa = PBXGroup;
+			children = (
+				CB0B294C14B3C2B4007E86A1 /* ApLo.icns */,
+				CB0B293214B3C2A2007E86A1 /* ApLo */,
+				CB0B295114B3C703007E86A1 /* Resources */,
+				CB0B295E14B3C949007E86A1 /* Misc */,
+				CB0B292B14B3C2A2007E86A1 /* Frameworks */,
+				CB0B292914B3C2A2007E86A1 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		CB0B292914B3C2A2007E86A1 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				CB0B292814B3C2A2007E86A1 /* ApLo.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		CB0B292B14B3C2A2007E86A1 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				CB0B297114B3C9DD007E86A1 /* WebKit.framework */,
+				CB0B292C14B3C2A2007E86A1 /* Cocoa.framework */,
+				CB0B292E14B3C2A2007E86A1 /* Other Frameworks */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		CB0B292E14B3C2A2007E86A1 /* Other Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				CB0B292F14B3C2A2007E86A1 /* AppKit.framework */,
+				CB0B293014B3C2A2007E86A1 /* CoreData.framework */,
+				CB0B293114B3C2A2007E86A1 /* Foundation.framework */,
+			);
+			name = "Other Frameworks";
+			sourceTree = "<group>";
+		};
+		CB0B293214B3C2A2007E86A1 /* ApLo */ = {
+			isa = PBXGroup;
+			children = (
+				CB0B293E14B3C2A2007E86A1 /* ApLoDocument.h */,
+				CB0B293F14B3C2A2007E86A1 /* ApLoDocument.m */,
+			);
+			path = ApLo;
+			sourceTree = "<group>";
+		};
+		CB0B295114B3C703007E86A1 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				CB0B297514B3D974007E86A1 /* logParser */,
+				CB0B297314B3CA31007E86A1 /* Template.html */,
+				CB0B295214B3C71F007E86A1 /* ApLoDocument.xib */,
+				CB0B295414B3C71F007E86A1 /* Credits.rtf */,
+				CB0B295614B3C71F007E86A1 /* InfoPlist.strings */,
+				CB0B295814B3C71F007E86A1 /* MainMenu.xib */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		CB0B295E14B3C949007E86A1 /* Misc */ = {
+			isa = PBXGroup;
+			children = (
+				CB0B295F14B3C949007E86A1 /* ApLo-Info.plist */,
+				CB0B296014B3C949007E86A1 /* ApLo-Prefix.pch */,
+				CB0B296114B3C949007E86A1 /* IconDesign */,
+				CB0B296814B3C949007E86A1 /* main.m */,
+			);
+			path = Misc;
+			sourceTree = "<group>";
+		};
+		CB0B296114B3C949007E86A1 /* IconDesign */ = {
+			isa = PBXGroup;
+			children = (
+				CB0B296214B3C949007E86A1 /* AplLo.acorn */,
+				CB0B296314B3C949007E86A1 /* AplLo.png */,
+				CB0B296414B3C949007E86A1 /* application.tiff */,
+				CB0B296514B3C949007E86A1 /* ApplicationIconTools.acorn */,
+				CB0B296614B3C949007E86A1 /* Console.icns */,
+				CB0B296714B3C949007E86A1 /* GenericApplicationIcon.icns */,
+			);
+			path = IconDesign;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		CB0B292714B3C2A2007E86A1 /* ApLo */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CB0B294914B3C2A2007E86A1 /* Build configuration list for PBXNativeTarget "ApLo" */;
+			buildPhases = (
+				CB0B292414B3C2A2007E86A1 /* Sources */,
+				CB0B292514B3C2A2007E86A1 /* Frameworks */,
+				CB0B292614B3C2A2007E86A1 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ApLo;
+			productName = ApLo;
+			productReference = CB0B292814B3C2A2007E86A1 /* ApLo.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		CB0B291F14B3C2A2007E86A1 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0420;
+				ORGANIZATIONNAME = "BITart Consulting";
+			};
+			buildConfigurationList = CB0B292214B3C2A2007E86A1 /* Build configuration list for PBXProject "ApLo" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = CB0B291D14B3C2A2007E86A1;
+			productRefGroup = CB0B292914B3C2A2007E86A1 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				CB0B292714B3C2A2007E86A1 /* ApLo */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		CB0B292614B3C2A2007E86A1 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CB0B294D14B3C2B4007E86A1 /* ApLo.icns in Resources */,
+				CB0B295A14B3C71F007E86A1 /* ApLoDocument.xib in Resources */,
+				CB0B295B14B3C71F007E86A1 /* Credits.rtf in Resources */,
+				CB0B295C14B3C71F007E86A1 /* InfoPlist.strings in Resources */,
+				CB0B295D14B3C71F007E86A1 /* MainMenu.xib in Resources */,
+				CB0B297414B3CA31007E86A1 /* Template.html in Resources */,
+				CB0B297614B3D974007E86A1 /* logParser in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		CB0B292414B3C2A2007E86A1 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CB0B294014B3C2A2007E86A1 /* ApLoDocument.m in Sources */,
+				CB0B297014B3C949007E86A1 /* main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		CB0B295214B3C71F007E86A1 /* ApLoDocument.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CB0B295314B3C71F007E86A1 /* en */,
+			);
+			name = ApLoDocument.xib;
+			sourceTree = "<group>";
+		};
+		CB0B295414B3C71F007E86A1 /* Credits.rtf */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CB0B295514B3C71F007E86A1 /* en */,
+			);
+			name = Credits.rtf;
+			sourceTree = "<group>";
+		};
+		CB0B295614B3C71F007E86A1 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CB0B295714B3C71F007E86A1 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		CB0B295814B3C71F007E86A1 /* MainMenu.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CB0B295914B3C71F007E86A1 /* en */,
+			);
+			name = MainMenu.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		CB0B294714B3C2A2007E86A1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		CB0B294814B3C2A2007E86A1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		CB0B294A14B3C2A2007E86A1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Misc/ApLo-Prefix.pch";
+				INFOPLIST_FILE = "Misc/ApLo-Info.plist";
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		CB0B294B14B3C2A2007E86A1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Misc/ApLo-Prefix.pch";
+				INFOPLIST_FILE = "Misc/ApLo-Info.plist";
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		CB0B292214B3C2A2007E86A1 /* Build configuration list for PBXProject "ApLo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CB0B294714B3C2A2007E86A1 /* Debug */,
+				CB0B294814B3C2A2007E86A1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CB0B294914B3C2A2007E86A1 /* Build configuration list for PBXNativeTarget "ApLo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CB0B294A14B3C2A2007E86A1 /* Debug */,
+				CB0B294B14B3C2A2007E86A1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = CB0B291F14B3C2A2007E86A1 /* Project object */;
+}
