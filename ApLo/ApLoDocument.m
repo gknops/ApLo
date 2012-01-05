@@ -154,7 +154,7 @@
 		[aploWebView stringByEvaluatingJavaScriptFromString:@"ApLoRemoveHighlights()"];
 		self.numMatches=0;
 	}
-	else
+	else if([searchString length]>2)
 	{
 	    NSString	*result=[aploWebView stringByEvaluatingJavaScriptFromString:
 			[NSString stringWithFormat:@"ApLoHighlightString('%@')",escapedSearchString]
@@ -187,6 +187,10 @@
 	}
 	
 	[aploWebView stringByEvaluatingJavaScriptFromString:javascript];
+	
+	[aploWebView centerSelectionInVisibleArea:self];
+	
+	[self forceWebViewRedraw];
 }
 - (BOOL)searchButtonsEnabled {
 	
