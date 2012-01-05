@@ -52,7 +52,6 @@
 			}
 			function ApLoRemoveHighlights()
 			{
-			    ApLoNumMatches=0;
 				ApLoSelectMatch(-1);
 			    ApLoRemoveHighlightsIn(document.body);
 				ApLoMatches.length=0;
@@ -113,8 +112,6 @@
 						element.parentNode.insertBefore(text,next);
 						element=text;
 						ApLoMatches.push(span);
-						redraw(span);
-						ApLoNumMatches++;
 					}
 				}
 				else if(element.nodeType==1)
@@ -157,19 +154,24 @@
 				
 				if(idx>=0)
 				{
+					selectTextInElement(ApLoMatches[idx]);
 					ApLoMatches[idx].setAttribute("class","ApLoSearchSelected");
-					ApLoMatches[idx].scrollIntoView(true);
-					// ApLoMatches[idx].select(true);
+					// ApLoMatches[idx].scrollIntoView(true);
+					
+					// Note: Obj-C code will take care of the scrolling
 				}
 				
 				ApLoSelectedMatch=idx;
 			}
-			function redraw(element)
-			{
-				// element.style.display=”none”;
-				// var redrawFix=element.offsetHeight;
-				// element.style.display=”block”;
+			function selectTextInElement(element) {
+				
+				selection = window.getSelection();
+				range = document.createRange();
+				range.selectNode(element);
+				selection.removeAllRanges();
+				selection.addRange(range);
 			}
+			
 		</script>
 	</head>
 	<body>

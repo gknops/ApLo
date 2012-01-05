@@ -187,9 +187,7 @@
 	}
 	
 	[aploWebView stringByEvaluatingJavaScriptFromString:javascript];
-	
 	[aploWebView centerSelectionInVisibleArea:self];
-	
 	[self forceWebViewRedraw];
 }
 - (BOOL)searchButtonsEnabled {
