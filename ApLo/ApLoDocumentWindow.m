@@ -32,6 +32,29 @@ fromView:nil]
 	[super sendEvent:event];
 }
 
+
+//*****************************************************************************
+// Find Panel support
+//*****************************************************************************
+- (void)performFindPanelAction:(id)sender {
+	
+	DLog(@"%@  sender: %@  (%@)",_CMD,sender,self);
+	
+	NSBeep();
+}
+-(BOOL)validateMenuItem:(NSMenuItem *)theMenuItem
+{
+	DLog(@"%@  theMenuItem: %@  (%@)",_CMD,theMenuItem,self);
+	
+	return NO;
+}
+- (BOOL)validateUserInterfaceItem:(id < NSValidatedUserInterfaceItem >)anItem {
+	
+	DLog(@"%@  anItem: %@  (%@)",_CMD,anItem,self);
+	
+	return NO;
+}
+
 //*****************************************************************************
 // Synthesized Accessors
 //*****************************************************************************

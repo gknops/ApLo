@@ -10,26 +10,30 @@
 
 @interface ApLoDocument: NSDocument
 {
-	NSTask							*logParser;
-	NSFileHandle					*logParserFH;
+	NSTask								*logParser;
+	NSFileHandle						*logParserFH;
 	
-	PROP(assign,IBOutlet) WebView	*aploWebView;
-	PROP(copy) NSString				*identifier;
 	
-	PROP(copy,nonatomic) NSString	*searchString;
-	PROP(assign) NSInteger			numMatches;
 	
-	//VPROP(assign) BOOL			searchButtonsEnabled;
+	PROP(assign,IBOutlet) NSSearchField	*searchField;
+	PROP(assign,IBOutlet) WebView		*aploWebView;
+	PROP(copy) NSString					*identifier;
+	
+	PROP(copy,nonatomic) NSString		*searchString;
+	PROP(assign) NSInteger				numMatches;
+	
+	//VPROP(assign) BOOL				searchButtonsEnabled;
 }
-@property (assign) IBOutlet	WebView		*aploWebView;
-@property (copy)				NSString	*identifier;
-@property (copy,nonatomic)		NSString	*searchString;
-@property (assign)				NSInteger	numMatches;
-@property (assign)				BOOL		searchButtonsEnabled;
+@property (assign) IBOutlet	NSSearchField	*searchField;
+@property (assign) IBOutlet	WebView			*aploWebView;
+@property (copy)				NSString		*identifier;
+@property (copy,nonatomic)		NSString		*searchString;
+@property (assign)				NSInteger		numMatches;
+@property (assign)				BOOL			searchButtonsEnabled;
 
 //*****************************************************************************
 // Factory methods
-//*****************************************************************************
+//*****************************************************************************init
 - (id)init;
 - (void)dealloc;
 
@@ -48,6 +52,12 @@
 - (IBAction)clear:sender;
 
 //*****************************************************************************
+// Find Panel support
+//*****************************************************************************
+- (void)performApLoFindPanelAction:(id)sender;
+- (void)setSearchStringFromSelection;
+
+//*****************************************************************************
 // Search support
 //*****************************************************************************
 - (void)setSearchString:(NSString *)newSearchString;
@@ -57,6 +67,7 @@
 - (void)findWithJS:(NSString *)javascript;
 - (BOOL)searchButtonsEnabled;
 + (NSSet *)keyPathsForValuesAffectingSearchButtonsEnabled;
+- (void)forceWebViewRedraw;
 
 //*****************************************************************************
 // Implementation
@@ -78,6 +89,7 @@
 //*****************************************************************************
 // Synthesized Accessors
 //*****************************************************************************
+// @synthesize searchField;
 // @synthesize searchString;
 // @synthesize numMatches;
 // @dynamic searchButtonsEnabled;

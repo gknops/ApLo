@@ -16,11 +16,6 @@
 	
 	if((self=[super init]))
 	{
-	    [[NSNotificationCenter defaultCenter]addObserver:self
-	        selector:@selector(readFromParser:)
-	        name:NSFileHandleReadCompletionNotification
-	        object:nil
-		];
 	}
 	
 	return self;
@@ -54,6 +49,7 @@
 	
 	// [[aploWebView window]setFrameAutosaveName:@"xxx"];
 	
+	[aploWebView setPreferencesIdentifier:@"ApLoWebViewPreferences"];
 	[aploWebView setFrameLoadDelegate:self];
 	
 	[self startMonitoring:self];
@@ -93,30 +89,81 @@
 }
 
 //*****************************************************************************
+// Find Panel support
+//*****************************************************************************
+- (void)performApLoFindPanelAction:(id)sender {
+	
+	NSInteger	tag=[sender tag];
+	
+	switch(tag)
+	{
+		case NSTextFinderActionShowFindInterface:
+	    	[searchField.window makeFirstResponder:searchField];
+			break;
+		case NSTextFinderActionNextMatch:
+			[self findNext:sender];
+			break;
+		case NSTextFinderActionPreviousMatch:
+			[self findPrevious:sender];
+			break;
+		case NSTextFinderActionSetSearchString:
+			[self setSearchStringFromSelection];
+			break;
+		default:
+			ERRLog(@"performApLoFindPanelAction: for sender tag %ld not supported!",(long)tag);
+			NSBeep();
+			break;
+	}
+}
+- (void)setSearchStringFromSelection {
+	
+	DOMRange	*dr=[aploWebView selectedDOMRange];
+	NSString	*s=dr.text;
+	
+	if(!s || [s length]==0)
+	{
+		NSBeep();
+		
+		return;
+	}
+	
+	self.searchString=s;
+}
+
+//*****************************************************************************
 // Search support
 //*****************************************************************************
 - (void)setSearchString:(NSString *)newSearchString {
-	
-	newSearchString=[newSearchString stringByReplacingOccurrencesOfString:@"'" withString:@"\\'"];
 	
 	id old=searchString;
 	searchString=[newSearchString copy];
 	[old release];
 	
-	if(!searchString || [searchString length]==0)
-	{
-		[aploWebView stringByEvaluatingJavaScriptFromString:@"ApLoRemoveHighlights"];
-		
-		return;
-	}
+    NSPasteboard	*pasteboard=[NSPasteboard pasteboardWithName:NSFindPboard];
 	
-    NSString	*result=[aploWebView stringByEvaluatingJavaScriptFromString:
-		[NSString stringWithFormat:@"ApLoHighlightString('%@')",searchString]
+    [pasteboard declareTypes:[NSArray arrayWithObject:NSStringPboardType] owner:nil];
+    [pasteboard setString:searchString forType:NSStringPboardType];
+	
+	NSString		*escapedSearchString=[searchString
+		stringByReplacingOccurrencesOfString:@"'"
+		withString:@"\\'"
 	];
 	
-	self.numMatches=[result integerValue];
+	if(!escapedSearchString || [escapedSearchString length]==0)
+	{
+		[aploWebView stringByEvaluatingJavaScriptFromString:@"ApLoRemoveHighlights()"];
+		self.numMatches=0;
+	}
+	else
+	{
+	    NSString	*result=[aploWebView stringByEvaluatingJavaScriptFromString:
+			[NSString stringWithFormat:@"ApLoHighlightString('%@')",escapedSearchString]
+		];
+		
+		self.numMatches=[result integerValue];
+	}
 	
-	[aploWebView setNeedsDisplay:YES];
+	[self forceWebViewRedraw];
 }
 - (IBAction)findNext:sender {
 	
@@ -148,6 +195,11 @@
 + (NSSet *)keyPathsForValuesAffectingSearchButtonsEnabled {
 	
 	return [NSSet setWithObjects:@"numMatches",nil];
+}
+- (void)forceWebViewRedraw {
+	
+	[aploWebView makeTextLarger:self];
+	[aploWebView makeTextSmaller:self];
 }
 
 //*****************************************************************************
@@ -185,15 +237,15 @@
 	[newNode setInnerHTML:html];
 	
 	NSView				*docView=[[[aploWebView mainFrame]frameView]documentView];
-	NSRect				docViewBunds=[docView bounds];
+	NSRect				docViewBounds=[docView bounds];
 	NSScrollView 		*scrollView=[docView enclosingScrollView];
 	NSRect 				scrollViewBounds=[[scrollView contentView]bounds];
 	
-	BOOL				shouldScroll=((scrollViewBounds.origin.y+scrollViewBounds.size.height)==docViewBunds.size.height);
+	BOOL				shouldScroll=((scrollViewBounds.origin.y+scrollViewBounds.size.height)==docViewBounds.size.height);
 	
 	
 	// DLog(@"scrollViewBounds: %@",NSStringFromRect(scrollViewBounds));
-	// DLog(@"docViewBunds: %@",NSStringFromRect(docViewBunds));
+	// DLog(@"docViewBounds: %@",NSStringFromRect(docViewBounds));
 	// DLog(@"shouldScroll: %d",shouldScroll);
 	
 	// Add the new element to the bodyNode as the last child.
@@ -222,6 +274,11 @@
 	
 	if(logParser)
 	{
+	    [[NSNotificationCenter defaultCenter]removeObserver:self
+	        name:NSFileHandleReadCompletionNotification
+	        object:logParserFH
+		];
+		
 		logParserFH=nil;
 		[logParser terminate];
 		[logParser release];
@@ -248,6 +305,13 @@
 	[logParser setStandardOutput:myPipe];
 	
 	logParserFH=[myPipe fileHandleForReading];
+	
+    [[NSNotificationCenter defaultCenter]addObserver:self
+        selector:@selector(readFromParser:)
+        name:NSFileHandleReadCompletionNotification
+        object:logParserFH
+	];
+	
 	[logParserFH readInBackgroundAndNotify];
 	
 	[logParser launch];
@@ -257,6 +321,10 @@
     if([notification object]!=logParserFH) return;
 	
     NSData		*data=[[notification userInfo]objectForKey:NSFileHandleNotificationDataItem];
+	
+	// TODO: data length of 0 means process closed!
+	
+	
     NSString	*html=[[NSString alloc]
 		initWithData:data
 		encoding:NSUTF8StringEncoding
@@ -272,6 +340,7 @@
 //*****************************************************************************
 // Synthesized Accessors
 //*****************************************************************************
+@synthesize searchField;
 @synthesize searchString;
 @synthesize numMatches;
 @dynamic searchButtonsEnabled;

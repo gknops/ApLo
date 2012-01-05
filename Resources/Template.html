@@ -36,6 +36,10 @@
 			}
 		</style>
 		<script type="text/javascript">
+			
+			var ApLoMatches=new Array();
+			var ApLoSelectedMatch=-1;
+			
 			function ApLoHighlightString(searchString)
 			{
 			    ApLoRemoveHighlights();
@@ -44,12 +48,14 @@
 				// (document.body.style.display='none') 
 				// (document.body.style.display='block').
 				
-				return ApLoNumMatches;
+				return ApLoMatches.length;
 			}
 			function ApLoRemoveHighlights()
 			{
 			    ApLoNumMatches=0;
+				ApLoSelectMatch(-1);
 			    ApLoRemoveHighlightsIn(document.body);
+				ApLoMatches.length=0;
 				
 				// (document.body.style.display='none') 
 				// (document.body.style.display='block').
@@ -106,6 +112,8 @@
 						element.parentNode.insertBefore(span,next);
 						element.parentNode.insertBefore(text,next);
 						element=text;
+						ApLoMatches.push(span);
+						redraw(span);
 						ApLoNumMatches++;
 					}
 				}
@@ -121,11 +129,45 @@
 					}
 				}
 			}
-			function ApLoFindPrevious()
-			{
-			}
 			function ApLoFindNext()
 			{
+				if(ApLoMatches.length==0) return;
+				
+				var idx=ApLoSelectedMatch-1;
+				
+				if(idx<0) idx=ApLoMatches.length-1;
+				
+				ApLoSelectMatch(idx);
+			}
+			function ApLoFindPrevious()
+			{
+				if(ApLoMatches.length==0) return;
+				
+				var idx=ApLoSelectedMatch+1;
+				if(idx>=ApLoMatches.length) idx=0;
+				
+				ApLoSelectMatch(idx);
+			}
+			function ApLoSelectMatch(idx)
+			{
+				if(ApLoSelectedMatch>=0)
+				{
+					ApLoMatches[ApLoSelectedMatch].setAttribute("class","ApLoSearchHighlight");
+				}
+				
+				if(idx>=0)
+				{
+					ApLoMatches[idx].setAttribute("class","ApLoSearchSelected");
+					ApLoMatches[idx].scrollIntoView(true);
+				}
+				
+				ApLoSelectedMatch=idx;
+			}
+			function redraw(element)
+			{
+				// element.style.display=”none”;
+				// var redrawFix=element.offsetHeight;
+				// element.style.display=”block”;
 			}
 		</script>
 	</head>
