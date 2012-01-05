@@ -186,6 +186,7 @@
 		return;
 	}
 	
+	[aploWebView.window makeFirstResponder:aploWebView];
 	[aploWebView stringByEvaluatingJavaScriptFromString:javascript];
 	[aploWebView centerSelectionInVisibleArea:self];
 	[self forceWebViewRedraw];
@@ -337,6 +338,20 @@
 	[html release];
 	
 	if(logParser) [logParserFH readInBackgroundAndNotify];
+}
+
+//*****************************************************************************
+// NSWindowDelegate Protocol
+//*****************************************************************************
+- (void)windowDidBecomeKey:(NSNotification *)notification {
+	
+    NSPasteboard	*pasteboard=[NSPasteboard pasteboardWithName:NSFindPboard];
+	NSString		*s=[pasteboard stringForType:NSStringPboardType];
+	
+	if(s && [s length]>0 && ![s isEqualToString:searchString])
+	{
+		self.searchString=s;
+	}
 }
 
 //*****************************************************************************

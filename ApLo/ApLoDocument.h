@@ -8,7 +8,7 @@
 
 @class WebFrame, WebView;
 
-@interface ApLoDocument: NSDocument
+@interface ApLoDocument: NSDocument <NSWindowDelegate>
 {
 	NSTask								*logParser;
 	NSFileHandle						*logParserFH;
@@ -85,6 +85,11 @@
 //*****************************************************************************
 - (void)startParser;
 - (void)readFromParser:(NSNotification *)notification;
+
+//*****************************************************************************
+// NSWindowDelegate Protocol
+//*****************************************************************************
+- (void)windowDidBecomeKey:(NSNotification *)notification;
 
 //*****************************************************************************
 // Synthesized Accessors
