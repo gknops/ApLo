@@ -246,9 +246,20 @@
 			function apLoGetSelectedNode()
 			{
 		        var	selection=window.getSelection();
-		        if(selection.rangeCount<=0) return null;
+		        if(selection.rangeCount<=0)
+				{
+					return ApLoSelectedMatch;
+				}
 				
-				return selection.getRangeAt(0).startContainer;
+				var range=selection.getRangeAt(0);
+				var	s=range.toString();
+				
+				if(s.length==0 && ApLoSelectedMatch)
+				{
+					return ApLoSelectedMatch;
+				}
+				
+				return range.startContainer;
 			}
 			function apLoSetSelectedMatch(element)
 			{
@@ -263,10 +274,6 @@
 					element.setAttribute("class","ApLoSearchSelected");
 					
 					apLoScrollIntoViewIfNeeded(element);
-					
-					// ApLoMatches[idx].scrollIntoView(true);
-					
-					// Note: Obj-C code will take care of the scrolling
 				}
 				
 				ApLoSelectedMatch=element;

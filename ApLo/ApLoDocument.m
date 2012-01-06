@@ -187,11 +187,6 @@
 	}
 	
 	[aploWebView stringByEvaluatingJavaScriptFromString:javascript];
-	// if([aploWebView.window firstResponder]==searchField)
-	// {
-	// 	[aploWebView.window makeFirstResponder:aploWebView];
-	// }
-	// [aploWebView centerSelectionInVisibleArea:self];
 	[self forceWebViewRedraw];
 }
 - (BOOL)searchButtonsEnabled {
@@ -316,8 +311,6 @@
     if([notification object]!=logParserFH) return;
 	
     NSData		*data=[[notification userInfo]objectForKey:NSFileHandleNotificationDataItem];
-	
-	// TODO: data length of 0 means process closed!
 	
 	if(!data || [data length]==0)
 	{
