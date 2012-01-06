@@ -123,11 +123,13 @@
 				
 				if(element.previousSibling) return element.previousSibling;
 				
-				if(element.parentNode==element) return NULL;
+				if(element.parentNode==element) return null;
 				
 				while(!element.parentNode.previousSibling)
 				{
 					element=element.parentNode;
+					
+					if(!element.parentNode) return null;
 				}
 				
 				return element.parentNode.previousSibling;
@@ -137,11 +139,13 @@
 				if(element.childNodes.length>0) return element.childNodes[0];
 				if(element.nextSibling) return element.nextSibling;
 				
-				if(element.parentNode==element) return NULL;
+				if(element.parentNode==element) return null;
 				
 				while(!element.parentNode.nextSibling)
 				{
 					element=element.parentNode;
+					
+					if(!element.parentNode) return null;
 				}
 				
 				return element.parentNode.nextSibling;
@@ -186,48 +190,46 @@
 			}
 			function ApLoFindPrevious()
 			{
+				var element=null;
 				var selectedElement=apLoGetSelectedNode(true);
 				
-				if(!selectedElement)
+				if(selectedElement)
 				{
-					if(AploMatches.length>0)
+					element=findHighlightedElementAtOrPreceding(selectedElement);
+				
+					if(element==selectedElement)
 					{
-						apLoSetSelectedMatch(AploMatches[AploMatches.length-1]);
+						element=apLoElementPreceding(selectedElement);
+						element=findHighlightedElementAtOrPreceding(element);
 					}
-					
-					return;
 				}
 				
-				var element=findHighlightedElementAtOrPreceding(selectedElement);
-				
-				if(element==selectedElement)
+				if(!element && ApLoMatches.length>0)
 				{
-					element=apLoElementPreceding(selectedElement);
-					element=findHighlightedElementAtOrPreceding(element);
+					element=ApLoMatches[0];
 				}
 				
 				apLoSetSelectedMatch(element);				
 			}
 			function ApLoFindNext()
 			{
+				var element=null;
 				var selectedElement=apLoGetSelectedNode(true);
 				
-				if(!selectedElement)
+				if(selectedElement)
 				{
-					if(AploMatches.length>0)
+					element=findHighlightedElementAtOrFollowing(selectedElement);
+				
+					if(element==selectedElement)
 					{
-						apLoSetSelectedMatch(AploMatches[0]);
+						element=apLoElementFollowing(selectedElement);
+						element=findHighlightedElementAtOrFollowing(element);
 					}
-					
-					return;
 				}
 				
-				var element=findHighlightedElementAtOrFollowing(selectedElement);
-				
-				if(element==selectedElement)
+				if(!element && ApLoMatches.length>0)
 				{
-					element=apLoElementFollowing(selectedElement);
-					element=findHighlightedElementAtOrFollowing(element);
+					element=ApLoMatches[ApLoMatches.length-1];
 				}
 				
 				apLoSetSelectedMatch(element);				
