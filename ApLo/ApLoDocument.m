@@ -278,18 +278,7 @@
 //*****************************************************************************
 - (void)startParser {
 	
-	if(logParser)
-	{
-	    [[NSNotificationCenter defaultCenter]removeObserver:self
-	        name:NSFileHandleReadCompletionNotification
-	        object:logParserFH
-		];
-		
-		logParserFH=nil;
-		[logParser terminate];
-		[logParser release];
-		logParser=nil;
-	}
+	[self terminateParser];
 	
 	NSString	*logParserPath=[[NSBundle bundleForClass:[self class]]
 		pathForResource:@"logParser"
@@ -330,6 +319,13 @@
 	
 	// TODO: data length of 0 means process closed!
 	
+	if(!data || [data length]==0)
+	{
+		[self terminateParser];
+		
+		return;
+	}
+	
 	
     NSString	*html=[[NSString alloc]
 		initWithData:data
@@ -341,6 +337,20 @@
 	[html release];
 	
 	if(logParser) [logParserFH readInBackgroundAndNotify];
+}
+- (void)terminateParser {
+	
+	if(!logParser) return;
+	
+    [[NSNotificationCenter defaultCenter]removeObserver:self
+        name:NSFileHandleReadCompletionNotification
+        object:logParserFH
+	];
+	
+	logParserFH=nil;
+	[logParser terminate];
+	[logParser release];
+	logParser=nil;
 }
 
 //*****************************************************************************

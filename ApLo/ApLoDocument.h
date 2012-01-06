@@ -85,6 +85,7 @@
 //*****************************************************************************
 - (void)startParser;
 - (void)readFromParser:(NSNotification *)notification;
+- (void)terminateParser;
 
 //*****************************************************************************
 // NSWindowDelegate Protocol
