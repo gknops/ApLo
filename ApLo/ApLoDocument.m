@@ -186,8 +186,11 @@
 		return;
 	}
 	
-	[aploWebView.window makeFirstResponder:aploWebView];
 	[aploWebView stringByEvaluatingJavaScriptFromString:javascript];
+	// if([aploWebView.window firstResponder]==searchField)
+	// {
+	// 	[aploWebView.window makeFirstResponder:aploWebView];
+	// }
 	[aploWebView centerSelectionInVisibleArea:self];
 	[self forceWebViewRedraw];
 }

@@ -38,26 +38,20 @@
 		<script type="text/javascript">
 			
 			var ApLoMatches=new Array();
-			var ApLoSelectedMatch=-1;
+			var ApLoSelectedMatch=null;
 			
 			function ApLoHighlightString(searchString)
 			{
 			    ApLoRemoveHighlights();
 			    ApLoAddHighlights(document.body,searchString.toLowerCase());
 				
-				// (document.body.style.display='none') 
-				// (document.body.style.display='block').
-				
 				return ApLoMatches.length;
 			}
 			function ApLoRemoveHighlights()
 			{
-				ApLoSelectMatch(-1);
+				apLoSetSelectedMatch(null);
 			    ApLoRemoveHighlightsIn(document.body);
 				ApLoMatches.length=0;
-				
-				// (document.body.style.display='none') 
-				// (document.body.style.display='block').
 			}
 			function ApLoRemoveHighlightsIn(element)
 			{
@@ -87,6 +81,70 @@
 						}
 					}
 				}
+			}
+			function findHighlightedElementAtOrPreceding(element)
+			{
+				while(element)
+				{
+					if(element.nodeType==1
+						&& element.getAttribute("class")=="ApLoSearchHighlight"
+					)
+					{
+						break;
+					}
+					
+					element=apLoElementPreceding(element);
+				}
+				
+				return element;
+			}
+			function findHighlightedElementAtOrFollowing(element)
+			{
+				while(element)
+				{
+					if(element.nodeType==1
+						&& element.getAttribute("class")=="ApLoSearchHighlight"
+					)
+					{
+						break;
+					}
+					
+					element=apLoElementFollowing(element);
+				}
+				
+				return element;
+			}
+			function apLoElementPreceding(element) {
+				
+				if(element.childNodes.length>0)
+				{
+					return element.childNodes[element.childNodes.length-1];
+				}
+				
+				if(element.previousSibling) return element.previousSibling;
+				
+				if(element.parentNode==element) return NULL;
+				
+				while(!element.parentNode.previousSibling)
+				{
+					element=element.parentNode;
+				}
+				
+				return element.parentNode.previousSibling;
+			}
+			function apLoElementFollowing(element) {
+				
+				if(element.childNodes.length>0) return element.childNodes[0];
+				if(element.nextSibling) return element.nextSibling;
+				
+				if(element.parentNode==element) return NULL;
+				
+				while(!element.parentNode.nextSibling)
+				{
+					element=element.parentNode;
+				}
+				
+				return element.parentNode.nextSibling;
 			}
 			function ApLoAddHighlights(element,searchString)
 			{
@@ -126,44 +184,113 @@
 					}
 				}
 			}
-			function ApLoFindNext()
-			{
-				if(ApLoMatches.length==0) return;
-				
-				var idx=ApLoSelectedMatch-1;
-				
-				if(idx<0) idx=ApLoMatches.length-1;
-				
-				ApLoSelectMatch(idx);
-			}
 			function ApLoFindPrevious()
 			{
-				if(ApLoMatches.length==0) return;
+				var selectedElement=apLoGetSelectedNode(true);
 				
-				var idx=ApLoSelectedMatch+1;
-				if(idx>=ApLoMatches.length) idx=0;
-				
-				ApLoSelectMatch(idx);
-			}
-			function ApLoSelectMatch(idx)
-			{
-				if(ApLoSelectedMatch>=0)
+				if(!selectedElement)
 				{
-					ApLoMatches[ApLoSelectedMatch].setAttribute("class","ApLoSearchHighlight");
+					if(AploMatches.length>0)
+					{
+						apLoSetSelectedMatch(AploMatches[AploMatches.length-1]);
+					}
+					
+					return;
 				}
 				
-				if(idx>=0)
+				var element=findHighlightedElementAtOrPreceding(selectedElement);
+				
+				if(element==selectedElement)
 				{
-					selectTextInElement(ApLoMatches[idx]);
-					ApLoMatches[idx].setAttribute("class","ApLoSearchSelected");
+					element=apLoElementPreceding(selectedElement);
+					element=findHighlightedElementAtOrPreceding(element);
+				}
+				
+				apLoSetSelectedMatch(element);				
+			}
+			function ApLoFindNext()
+			{
+				var selectedElement=apLoGetSelectedNode(true);
+				
+				if(!selectedElement)
+				{
+					if(AploMatches.length>0)
+					{
+						apLoSetSelectedMatch(AploMatches[0]);
+					}
+					
+					return;
+				}
+				
+				var element=findHighlightedElementAtOrFollowing(selectedElement);
+				
+				if(element==selectedElement)
+				{
+					element=apLoElementFollowing(selectedElement);
+					element=findHighlightedElementAtOrFollowing(element);
+				}
+				
+				apLoSetSelectedMatch(element);				
+			}
+			function apLoGetSelectedNode()
+			{
+		        var	selection=window.getSelection();
+		        if(selection.rangeCount<=0) return null;
+				
+				return selection.getRangeAt(0).startContainer;
+			}
+			function getSelectionBoundaryElement(isStart) {
+			    var range, sel, container;
+			    if (document.selection) {
+			        range = document.selection.createRange();
+			        range.collapse(isStart);
+			        return range.parentElement();
+			    } else {
+			        sel = window.getSelection();
+			        if (sel.getRangeAt) {
+			            if (sel.rangeCount > 0) {
+			                range = sel.getRangeAt(0);
+			            }
+			        } else {
+			            // Old WebKit
+			            range = document.createRange();
+			            range.setStart(sel.anchorNode, sel.anchorOffset);
+			            range.setEnd(sel.focusNode, sel.focusOffset);
+
+			            // Handle the case when the selection was selected backwards (from the end to the start in the document)
+			            if (range.collapsed !== sel.isCollapsed) {
+			                range.setStart(sel.focusNode, sel.focusOffset);
+			                range.setEnd(sel.anchorNode, sel.anchorOffset);
+			            }
+			       }
+
+			        if (range) {
+			           container = range[isStart ? "startContainer" : "endContainer"];
+
+			           // Check if the container is a text node and return its parent if so
+			           return container.nodeType === 3 ? container.parentNode : container;
+			        }   
+			    }
+			}
+			function apLoSetSelectedMatch(element)
+			{
+				if(ApLoSelectedMatch)
+				{
+					ApLoSelectedMatch.setAttribute("class","ApLoSearchHighlight");
+				}
+				
+				if(element)
+				{
+					apLoSelectTextInElement(element);
+					element.setAttribute("class","ApLoSearchSelected");
 					// ApLoMatches[idx].scrollIntoView(true);
 					
 					// Note: Obj-C code will take care of the scrolling
 				}
 				
-				ApLoSelectedMatch=idx;
+				ApLoSelectedMatch=element;
 			}
-			function selectTextInElement(element) {
+			function apLoSelectTextInElement(element) {
 				
 				var selection=window.getSelection();
 				var range=document.createRange();
@@ -171,7 +298,6 @@
 				selection.removeAllRanges();
 				selection.addRange(range);
 			}
-			
 		</script>
 	</head>
 	<body>
