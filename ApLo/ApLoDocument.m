@@ -151,13 +151,13 @@
 	
 	if(!escapedSearchString || [escapedSearchString length]==0)
 	{
-		[aploWebView stringByEvaluatingJavaScriptFromString:@"ApLoRemoveHighlights()"];
+		[aploWebView stringByEvaluatingJavaScriptFromString:@"apLoRemoveHighlights()"];
 		self.numMatches=0;
 	}
 	else if([searchString length]>2)
 	{
 	    NSString	*result=[aploWebView stringByEvaluatingJavaScriptFromString:
-			[NSString stringWithFormat:@"ApLoHighlightString('%@')",escapedSearchString]
+			[NSString stringWithFormat:@"apLoHighlightString('%@')",escapedSearchString]
 		];
 		
 		self.numMatches=[result integerValue];
@@ -167,15 +167,15 @@
 }
 - (IBAction)findNext:sender {
 	
-	[self findWithJS:@"ApLoFindNext()"];
+	[self findWithJS:@"apLoFindNext()"];
 }
 - (IBAction)findPrevious:sender {
 	
-	[self findWithJS:@"ApLoFindPrevious()"];
+	[self findWithJS:@"apLoFindPrevious()"];
 }
 - (IBAction)findButtonClicked:sender {
 	
-	[self findWithJS:([sender selectedSegment])?@"ApLoFindNext()":@"ApLoFindPrevious()"];
+	[self findWithJS:([sender selectedSegment])?@"apLoFindNext()":@"apLoFindPrevious()"];
 }
 - (void)findWithJS:(NSString *)javascript {
 	

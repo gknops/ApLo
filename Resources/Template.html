@@ -36,24 +36,79 @@
 			}
 		</style>
 		<script type="text/javascript">
-			
+			//*****************************************************************************
+			// Global variables
+			//*****************************************************************************
 			var ApLoMatches=new Array();
 			var ApLoSelectedMatch=null;
 			
-			function ApLoHighlightString(searchString)
+			//*****************************************************************************
+			// Functions called from outside
+			//*****************************************************************************
+			function apLoHighlightString(searchString)
 			{
-			    ApLoRemoveHighlights();
-			    ApLoAddHighlights(document.body,searchString.toLowerCase());
+			    apLoRemoveHighlights();
+			    apLoAddHighlights(document.body,searchString.toLowerCase());
 				
 				return ApLoMatches.length;
 			}
-			function ApLoRemoveHighlights()
+			function apLoRemoveHighlights()
 			{
 				apLoSetSelectedMatch(null);
-			    ApLoRemoveHighlightsIn(document.body);
+			    apLoRemoveHighlightsIn(document.body);
 				ApLoMatches.length=0;
 			}
-			function ApLoRemoveHighlightsIn(element)
+			function apLoFindPrevious()
+			{
+				var element=null;
+				var selectedElement=apLoGetSelectedNode(true);
+				
+				if(selectedElement)
+				{
+					element=apLoFindHighlightedElementAtOrPreceding(selectedElement);
+				
+					if(element==selectedElement)
+					{
+						element=apLoElementPreceding(selectedElement);
+						element=apLoFindHighlightedElementAtOrPreceding(element);
+					}
+				}
+				
+				if(!element && ApLoMatches.length>0)
+				{
+					element=ApLoMatches[0];
+				}
+				
+				apLoSetSelectedMatch(element);				
+			}
+			function apLoFindNext()
+			{
+				var element=null;
+				var selectedElement=apLoGetSelectedNode(true);
+				
+				if(selectedElement)
+				{
+					element=apLoFindHighlightedElementAtOrFollowing(selectedElement);
+				
+					if(element==selectedElement)
+					{
+						element=apLoElementFollowing(selectedElement);
+						element=apLoFindHighlightedElementAtOrFollowing(element);
+					}
+				}
+				
+				if(!element && ApLoMatches.length>0)
+				{
+					element=ApLoMatches[ApLoMatches.length-1];
+				}
+				
+				apLoSetSelectedMatch(element);				
+			}
+			
+			//*****************************************************************************
+			// Utility functions
+			//*****************************************************************************
+			function apLoRemoveHighlightsIn(element)
 			{
 				if(element && element.nodeType==1)
 				{
@@ -70,7 +125,7 @@
 						var normalize=false;
 						for(var i=element.childNodes.length-1;i>=0;i--)
 						{
-							if(ApLoRemoveHighlightsIn(element.childNodes[i]))
+							if(apLoRemoveHighlightsIn(element.childNodes[i]))
 							{
 								normalize=true;
 							}
@@ -82,7 +137,7 @@
 					}
 				}
 			}
-			function findHighlightedElementAtOrPreceding(element)
+			function apLoFindHighlightedElementAtOrPreceding(element)
 			{
 				while(element)
 				{
@@ -98,7 +153,7 @@
 				
 				return element;
 			}
-			function findHighlightedElementAtOrFollowing(element)
+			function apLoFindHighlightedElementAtOrFollowing(element)
 			{
 				while(element)
 				{
@@ -150,7 +205,7 @@
 				
 				return element.parentNode.nextSibling;
 			}
-			function ApLoAddHighlights(element,searchString)
+			function apLoAddHighlights(element,searchString)
 			{
 				if(!element) return false;
 				if(element.nodeType==3)
@@ -183,56 +238,10 @@
 					{
 						for(var i=element.childNodes.length-1;i>=0;i--)
 						{
-							ApLoAddHighlights(element.childNodes[i],searchString);
+							apLoAddHighlights(element.childNodes[i],searchString);
 						}
 					}
 				}
-			}
-			function ApLoFindPrevious()
-			{
-				var element=null;
-				var selectedElement=apLoGetSelectedNode(true);
-				
-				if(selectedElement)
-				{
-					element=findHighlightedElementAtOrPreceding(selectedElement);
-				
-					if(element==selectedElement)
-					{
-						element=apLoElementPreceding(selectedElement);
-						element=findHighlightedElementAtOrPreceding(element);
-					}
-				}
-				
-				if(!element && ApLoMatches.length>0)
-				{
-					element=ApLoMatches[0];
-				}
-				
-				apLoSetSelectedMatch(element);				
-			}
-			function ApLoFindNext()
-			{
-				var element=null;
-				var selectedElement=apLoGetSelectedNode(true);
-				
-				if(selectedElement)
-				{
-					element=findHighlightedElementAtOrFollowing(selectedElement);
-				
-					if(element==selectedElement)
-					{
-						element=apLoElementFollowing(selectedElement);
-						element=findHighlightedElementAtOrFollowing(element);
-					}
-				}
-				
-				if(!element && ApLoMatches.length>0)
-				{
-					element=ApLoMatches[ApLoMatches.length-1];
-				}
-				
-				apLoSetSelectedMatch(element);				
 			}
 			function apLoGetSelectedNode()
 			{
@@ -240,39 +249,6 @@
 		        if(selection.rangeCount<=0) return null;
 				
 				return selection.getRangeAt(0).startContainer;
-			}
-			function getSelectionBoundaryElement(isStart) {
-			    var range, sel, container;
-			    if (document.selection) {
-			        range = document.selection.createRange();
-			        range.collapse(isStart);
-			        return range.parentElement();
-			    } else {
-			        sel = window.getSelection();
-			        if (sel.getRangeAt) {
-			            if (sel.rangeCount > 0) {
-			                range = sel.getRangeAt(0);
-			            }
-			        } else {
-			            // Old WebKit
-			            range = document.createRange();
-			            range.setStart(sel.anchorNode, sel.anchorOffset);
-			            range.setEnd(sel.focusNode, sel.focusOffset);
-
-			            // Handle the case when the selection was selected backwards (from the end to the start in the document)
-			            if (range.collapsed !== sel.isCollapsed) {
-			                range.setStart(sel.focusNode, sel.focusOffset);
-			                range.setEnd(sel.anchorNode, sel.anchorOffset);
-			            }
-			       }
-
-			        if (range) {
-			           container = range[isStart ? "startContainer" : "endContainer"];
-
-			           // Check if the container is a text node and return its parent if so
-			           return container.nodeType === 3 ? container.parentNode : container;
-			        }   
-			    }
 			}
 			function apLoSetSelectedMatch(element)
 			{
