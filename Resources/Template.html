@@ -261,6 +261,9 @@
 				{
 					apLoSelectTextInElement(element);
 					element.setAttribute("class","ApLoSearchSelected");
+					
+					apLoScrollIntoViewIfNeeded(element);
+					
 					// ApLoMatches[idx].scrollIntoView(true);
 					
 					// Note: Obj-C code will take care of the scrolling
@@ -276,6 +279,31 @@
 				selection.removeAllRanges();
 				selection.addRange(range);
 			}
+			function apLoScrollIntoViewIfNeeded(element) {
+				
+				var topOfPage=window.pageYOffset
+					|| document.documentElement.scrollTop
+					|| document.body.scrollTop;
+				var heightOfPage=window.innerHeight
+					|| document.documentElement.clientHeight
+					|| document.body.clientHeight;
+				var elementY=0;
+				var elementH=0;
+				for(var p=element;p&&p.tagName!='BODY';p=p.offsetParent)
+				{
+					elementY+=p.offsetTop;
+				}
+				elementH=element.offsetHeight;
+				if((topOfPage+heightOfPage)<(elementY+elementH))
+				{
+					element.scrollIntoView(false);
+				}
+				else if(elementY<topOfPage)
+				{
+					element.scrollIntoView(true);
+				}
+			}
+			
 		</script>
 	</head>
 	<body>

@@ -191,7 +191,7 @@
 	// {
 	// 	[aploWebView.window makeFirstResponder:aploWebView];
 	// }
-	[aploWebView centerSelectionInVisibleArea:self];
+	// [aploWebView centerSelectionInVisibleArea:self];
 	[self forceWebViewRedraw];
 }
 - (BOOL)searchButtonsEnabled {
