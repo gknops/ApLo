@@ -85,7 +85,14 @@
 //*****************************************************************************
 - (IBAction)clear:sender {
 	
-	[self startMonitoring:self];
+	// [self startMonitoring:self];
+	DOMDocument			*doc=[[aploWebView mainFrame]DOMDocument];
+	DOMHTMLBodyElement	*bodyNode=(DOMHTMLBodyElement *)[doc body];
+	
+	while(bodyNode.lastChild)
+	{
+		[bodyNode removeChild:bodyNode.lastChild];
+	}
 }
 
 //*****************************************************************************
