@@ -1,0 +1,296 @@
+#!/usr/bin/perl -w
+###############################################################################
+#	Copyright 2012 BITart Gerd Knops,  All rights reserved.
+#
+#	Project	: ApLo (BITart)
+#	File	: xcodebuildParser
+#	Author	: Gerd Knops gerti@BITart.com
+#
+###############################################################################
+#
+#	History:
+#	120107 Creation of file
+#
+###############################################################################
+#
+#	Description:
+#	«»
+#
+###############################################################################
+#
+# DISCLAIMER
+#
+# BITart and Gerd Knops make no warranties, representations or commitments
+# with regard to the contents of this software. BITart and Gerd Knops
+# specifically disclaim any and all warranties, whether express, implied or
+# statutory, including, but not limited to, any warranty of merchantability
+# or fitness for a particular purpose, and non-infringement. Under no
+# circumstances will BITart or Gerd Knops be liable for loss of data,
+# special, incidental or consequential damages out of the use of this
+# software, even if those damages were foreseeable, or BITart or Gerd Knops
+# was informed of their potential.
+#
+###############################################################################
+# Configuration
+###############################################################################
+	
+	use strict;
+	
+	#
+	# Note: optionally keyword values are preceded by one or more option flags,
+	# separated from the value with a pipe ('|') symbol. The keywords are:
+	# 
+	# - any digit n: use the nth argument as path to display (default: 1).
+	# - Xn: the nth argument is the path of the executable.
+	# 
+	our %KeyWords=(
+		'Clean.Remove'			=> '2|Cleaning',
+		ProcessInfoPlistFile	=> 'Processing Info.plist',
+		ProcessPCH				=> '2|Precompiling header',
+		CompileC				=> '2|Compiling',
+		Ld						=> 'X1|Linking',
+		CopyStringsFile			=> 'Copy strings',
+		CpResource				=> 'Copy resource',
+		CompileXIB				=> 'Compiling XIB',
+		Touch					=> 'Touching',
+	);
+	
+	our $Executable='';
+	
+	our $DivLevel=0;
+	our $DivIsPre=0;
+	
+	$::DivIDCounter='xcb00000';
+	
+###############################################################################
+# Main
+###############################################################################
+	
+	our @XCBArgs=qw(
+		-scheme	ApLo
+		build
+	);
+	
+	# open(IN,'-|',"xcodebuild",@XCBArgs) or die("Can't open 'xcodebuild' for read: $!\n");
+	open(IN,'/tmp/build.log') or die("Can't open 'xcodebuild' for read: $!\n");
+	while(<IN>)
+	{
+		chomp();
+		if(/^\s+/)
+		{
+			appendLine($_);
+		}
+		elsif(/^===\s*(.+)\s*===$/)
+		{
+			newSection($1);
+		}
+		elsif(/^\*\*\s*(.+)\s*\*\*/)
+		{
+			my $txt=$1;
+			my $ok=($txt=~/failed/i)?'error':'ok';
+			
+			closeDivsToLevel(1);
+			
+			addDiv(1,'',$txt,$ok,"${ok}Result");
+		}
+		elsif(/^\S+:\s*(warning|error):/)
+		{
+			addNotice(lc($1),$_);
+		}
+		elsif(s/^(\S+)\s*//)
+		{
+			if(exists($KeyWords{$1}))
+			{
+				newSubSection($1,$_);
+			}
+			else
+			{
+				my $cl=($DivLevel>1)?'':' class="indent1"';
+				print qq{<span$cl>$1 $_</span><br />\n}
+			}
+		}		
+	}
+	close(IN);
+	
+	closeDivsToLevel(0);
+
+###############################################################################
+# Subroutines
+###############################################################################
+sub appendLine {
+	
+	my $line=shift;
+	
+	my $ht=($DivIsPre)?'':'<br />';
+	
+	print qq{$line$ht\n};
+}
+sub newSection {
+	
+	my $text=shift;
+	
+	closeDivsToLevel(0);
+	
+	my $isHidden=0;
+	$isHidden=1 if($text=~/^CLEAN\s+/);
+	
+	addDiv($isHidden,'',$text);
+}
+sub addNotice {
+	
+	my $level=shift;
+	my $line=shift;
+	
+	closeDivsToLevel(1);
+	
+	$DivIsPre=1;
+	addDiv(0,$level,'',"$level pre","${level}Header");
+	
+	if($line=~s/^([^:]+):(\d+):((\d+)\:)?\s*//)
+	{
+		my $path=$1;
+		my $lineNo=$2;
+		my $column=$4 // undef;
+		
+		my $file=$path;
+		$file=~s/.*\///;
+		
+		$path=percentEscape($path);
+		
+		my $col='';
+		
+		if(defined($column))
+		{
+			$col=qq{&column=$column};
+		}
+		
+		my $ref=qq{<a href="txmt://open/?url=file://$path&line=$lineNo$col">$file</a>};
+		
+		appendLine("$ref: $line");
+	}
+	else
+	{
+		appendLine($line);
+	}
+}
+sub newSubSection {
+	
+	my $keyWord=shift;
+	my $text=shift;
+	my $extraClasses=shift // '';
+	
+	
+	my $prefix=$keyWord;
+	my $pathArgNo=1;
+	my $execArgNo=0;
+	my $pathToDisplay='';
+	
+	if(exists($KeyWords{$keyWord}))
+	{
+		my $kw=$KeyWords{$keyWord};
+		if($kw=~s/(.+)\|//)
+		{
+			my $opts=$1;
+			
+			if($opts=~s/X(\d+)//)
+			{
+				$execArgNo=$1;
+			}
+			if($opts=~s/(\d+)//)
+			{
+				$pathArgNo=$1;
+			}
+			
+			if($opts ne '')
+			{
+				warn("Keyword $kw has unrecognized option '$opts'\n");
+			}
+		}
+		$prefix=$kw;
+	}
+	
+	$Executable=getPathFromArgs($execArgNo,$text);
+	
+	$pathToDisplay=getPathFromArgs($pathArgNo,$text);
+	$pathToDisplay=~s/.*\///;
+	
+	closeDivsToLevel(1);
+	
+	addDiv(1,$prefix,$pathToDisplay,'compilerOutput');
+}
+sub getPathFromArgs {
+	
+	my $num=shift;
+	my $s=shift;
+	
+	print STDERR "$num: $s\n";
+	
+	return '' if($num<1);
+	
+	my @a=split(/\s/,$s);
+	
+	$a[$num-1] //'';
+}
+sub closeDivsToLevel {
+	
+	my $lv=shift;
+	
+	while($DivLevel>$lv)
+	{
+		closeDiv();
+	}
+}
+sub closeDiv {
+	
+	print "</div>\n";
+	$DivLevel--;
+	$DivIsPre=0;
+}
+sub addDiv {
+	
+	my $hidden=shift;
+	my $title=shift;
+	my $text=shift // '';
+	my $divClass=shift // '';
+	my $headerClass=shift // '';
+	
+	$headerClass=($headerClass ne '')?qq{ class="$headerClass"}:'';
+	
+	my $style=($hidden)?q{ style="display:none;"}:'';
+	
+	print qq{<div$headerClass>};
+	
+	my $id=makeToggleButton($hidden);
+	
+	print qq{<span class="divTitle">$title</span> <span class="divText">$text</span><br /></div>\n};
+	print qq{<div id="$id" class="$divClass indent$DivLevel"$style>};
+	
+	print "\n" unless($DivIsPre);
+	
+	$DivLevel++;
+}
+sub makeToggleButton {
+	
+	my $hidden=shift;
+	
+	$::DivIDCounter++;
+	
+	my $txt=($hidden)?'▶':'▼';
+	
+	print qq{<button type="button" class="divToggle indent$DivLevel" onclick="toggleDiv(this,'$::DivIDCounter')">$txt</button>};
+	# print qq{<span class="divToggle indent$DivLevel" onclick="toggleDiv(this,'$::DivIDCounter')">$txt</span>};
+	
+	$::DivIDCounter;
+}
+sub percentEscape {
+	
+	my $s=shift;
+	
+	# $s=~s/([^a-zA-Z0-9_\-.\/])/uc sprintf("%%%02x",ord($1))/eg;
+	$s=~s/(\s|[]\!\*\'\(\)\;\:\@\&\=\+\$\,\?\#\[\]])/uc sprintf("%%%02x",ord($1))/eg;
+	
+	$s;
+}
+
+1;
+############################################################################EOF
