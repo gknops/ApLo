@@ -55,16 +55,16 @@
 		Touch					=> 'Touching',
 	);
 	
-	our $Executable='';
+	our $Executable='';	
+	our $MainClass='xcodebuild';
 	
-	our $DivLevel=0;
-	our $DivIsPre=0;
-	
-	$::DivIDCounter='xcb00000';
+	our $IDCounter='levelID00000';	
 	
 ###############################################################################
 # Main
 ###############################################################################
+	
+	our $level=NestedLevel->new();
 	
 	our @XCBArgs=qw(
 		-scheme	ApLo
@@ -76,75 +76,200 @@
 	while(<IN>)
 	{
 		chomp();
+		next if(/^\s*$/);
 		if(/^\s+/)
 		{
-			appendLine($_);
+			$level->emitLine($_);
 		}
 		elsif(/^===\s*(.+)\s*===$/)
 		{
-			newSection($1);
+			my $txt=$1;
+			my $hidden=($txt=~/^clean/i)?1:0;
+			
+			$level=$level->popTo(0);
+			$level=$level->newChild($hidden,'',$txt);
 		}
 		elsif(/^\*\*\s*(.+)\s*\*\*/)
 		{
 			my $txt=$1;
-			my $ok=($txt=~/failed/i)?'error':'ok';
 			
-			closeDivsToLevel(1);
-			
-			addDiv(1,'',$txt,$ok,"${ok}Result");
+			$level=$level->popTo(1);
+			$level=$level->addResult($txt);
 		}
 		elsif(/^\S+:\s*(warning|error):/)
 		{
-			addNotice(lc($1),$_);
+			$level=$level->popTo(1);
+			$level=$level->addWarningOrErrorLevel(lc($1),$_);
 		}
 		elsif(s/^(\S+)\s*//)
 		{
 			if(exists($KeyWords{$1}))
 			{
-				newSubSection($1,$_);
+				$level=$level->popTo(1);
+				$level=$level->newSubSection($1,$_);
 			}
 			else
 			{
-				my $cl=($DivLevel>1)?'':' class="indent1"';
-				print qq{<span$cl>$1 $_</span><br />\n}
+				$level->emitLine("$1 $_");
 			}
 		}		
 	}
 	close(IN);
 	
-	closeDivsToLevel(0);
+	$level=$level->popTo(0);
+	
 
 ###############################################################################
 # Subroutines
 ###############################################################################
-sub appendLine {
+
+
+###############################################################################
+package NestedLevel;
+###############################################################################
+sub new {
 	
+	my $class=shift;
+	
+	my $self=bless({},$class);
+	
+	$self->{cssClasses}=[];
+	$self->{level}=0;
+	
+	$self->{id}=$IDCounter++;
+	
+	$self;
+}
+sub newChild {
+	
+	my $self=shift;
+	my $hidden=shift;
+	my $prefix=shift // '';
+	my $msg=shift // '';
+	my @extraClasses=@_;
+	
+	my $class=ref($self) || $self;
+	
+	my $child=$class->new();
+	
+	$child->{parent}=$self;
+	$child->{level}=$self->{level}+1;
+	$child->{hidden}=$hidden;
+	
+	my $line=$child->toggleButton($hidden);
+	
+	if($prefix ne '')
+	{
+		$line.=qq{<span class="levelPrefix">$prefix</span> };
+	}
+	
+	$line.=qq{<span class="levelMsg">$msg</span>};
+	
+	$self->emitLine($line,@extraClasses);
+	
+	$child;
+}
+sub addClasses {
+	
+	my $self=shift;
+	
+	push(@{$self->{cssClasses}},@_);
+}
+sub emitLine {
+	
+	my $self=shift;
+	my $line=shift;
+	my @extraClasses=@_;
+	
+	my $txt=$self->divStartText(@extraClasses).$line.$self->divEndText();
+	
+	print $txt;
+}
+sub divStartText {
+	
+	my $self=shift;
+	my @extraClasses=@_;
+	
+	my @classes=();
+	push(@classes,$::MainClass) if($::MainClass);
+	push(@classes,"indent$self->{level}");
+	push(@classes,@{$self->{cssClasses}});
+	push(@classes,@extraClasses);
+	
+	my $classes=join(' ',@classes);
+	
+	qq{<div class="$classes" name="$self->{id}">};
+}
+sub divEndText {
+	
+	qq{</div>\n};
+}
+sub popTo {
+	
+	my $o=shift;
+	my $l=shift;
+	
+	while($o->{level}>$l)
+	{
+		if($o->{hidden})
+		{
+			print qq{<script type="text/javascript">toggleVisibilityOfElementsNamed('$o->{id}');</script>\n};
+		}
+		$o=$o->{parent};
+	}
+	
+	$o;
+}
+sub toggleButton {
+	
+	my $self=shift;
+	my $hidden=shift;
+	
+	my $id=$self->{id};
+	my $buttonTxt=($hidden)?'▶':'▼';
+	
+	my $txt=qq{<button type="button" class="levelToggle" onclick="toggleLevel(this,'$id')">$buttonTxt</button>};
+	
+	# if($hidden)
+	# {
+	# 	$txt.=qq{<script type="text/javascript">toggleLevel(null,'$id');</script>};
+	# }
+	
+	$txt;
+}
+sub addResult {
+	
+	my $self=shift;
+	my $txt=shift;
+	
+	my $success=($txt=~/failed/i)?'error':'ok';
+	
+	my $child=$self->newChild(1,'',$txt,"${success}Header");
+	
+	$child->addClasses("${success}Line");
+	
+	$child;
+}
+sub addWarningOrErrorLevel {
+	
+	my $self=shift;
+	my $type=shift;
 	my $line=shift;
 	
-	my $ht=($DivIsPre)?'':'<br />';
+	my $child=$self->newChild(0,'',$type,"${type}LevelHeader");
 	
-	print qq{$line$ht\n};
+	$child->addClasses("${type}Level");
+	$child->addClasses('monospaced');
+	$child->appendLineWithLink($line);
+	
+	$child;
 }
-sub newSection {
+sub appendLineWithLink {
 	
-	my $text=shift;
-	
-	closeDivsToLevel(0);
-	
-	my $isHidden=0;
-	$isHidden=1 if($text=~/^CLEAN\s+/);
-	
-	addDiv($isHidden,'',$text);
-}
-sub addNotice {
-	
-	my $level=shift;
+	my $self=shift;
 	my $line=shift;
 	
-	closeDivsToLevel(1);
-	
-	$DivIsPre=1;
-	addDiv(0,$level,'',"$level pre","${level}Header");
+	my $html=$line;
 	
 	if($line=~s/^([^:]+):(\d+):((\d+)\:)?\s*//)
 	{
@@ -155,7 +280,7 @@ sub addNotice {
 		my $file=$path;
 		$file=~s/.*\///;
 		
-		$path=percentEscape($path);
+		$path=$self->percentEscape($path);
 		
 		my $col='';
 		
@@ -164,21 +289,18 @@ sub addNotice {
 			$col=qq{&column=$column};
 		}
 		
-		my $ref=qq{<a href="txmt://open/?url=file://$path&line=$lineNo$col">$file</a>};
-		
-		appendLine("$ref: $line");
+		$html=qq{<a href="txmt://open/?url=file://$path&line=$lineNo$col">$file</a>: $line};
 	}
-	else
-	{
-		appendLine($line);
-	}
+	
+	$self->emitLine($html);
+	
+	$self;
 }
 sub newSubSection {
 	
+	my $self=shift;
 	my $keyWord=shift;
 	my $text=shift;
-	my $extraClasses=shift // '';
-	
 	
 	my $prefix=$keyWord;
 	my $pathArgNo=1;
@@ -209,21 +331,26 @@ sub newSubSection {
 		$prefix=$kw;
 	}
 	
-	$Executable=getPathFromArgs($execArgNo,$text);
+	my $ex=$self->getPathFromArgs($execArgNo,$text);
 	
-	$pathToDisplay=getPathFromArgs($pathArgNo,$text);
+	$Executable=$ex if($ex ne '');
+	
+	$pathToDisplay=$self->getPathFromArgs($pathArgNo,$text);
 	$pathToDisplay=~s/.*\///;
 	
-	closeDivsToLevel(1);
+	my $child=$self->newChild(1,$prefix,$pathToDisplay);
 	
-	addDiv(1,$prefix,$pathToDisplay,'compilerOutput');
+	$child->addClasses('compilerOutput');
+	
+	$child;
 }
 sub getPathFromArgs {
 	
+	my $self=shift;
 	my $num=shift;
 	my $s=shift;
 	
-	print STDERR "$num: $s\n";
+	# print STDERR "$num: $s\n";
 	
 	return '' if($num<1);
 	
@@ -231,59 +358,9 @@ sub getPathFromArgs {
 	
 	$a[$num-1] //'';
 }
-sub closeDivsToLevel {
-	
-	my $lv=shift;
-	
-	while($DivLevel>$lv)
-	{
-		closeDiv();
-	}
-}
-sub closeDiv {
-	
-	print "</div>\n";
-	$DivLevel--;
-	$DivIsPre=0;
-}
-sub addDiv {
-	
-	my $hidden=shift;
-	my $title=shift;
-	my $text=shift // '';
-	my $divClass=shift // '';
-	my $headerClass=shift // '';
-	
-	$headerClass=($headerClass ne '')?qq{ class="$headerClass"}:'';
-	
-	my $style=($hidden)?q{ style="display:none;"}:'';
-	
-	print qq{<div$headerClass>};
-	
-	my $id=makeToggleButton($hidden);
-	
-	print qq{<span class="divTitle">$title</span> <span class="divText">$text</span><br /></div>\n};
-	print qq{<div id="$id" class="$divClass indent$DivLevel"$style>};
-	
-	print "\n" unless($DivIsPre);
-	
-	$DivLevel++;
-}
-sub makeToggleButton {
-	
-	my $hidden=shift;
-	
-	$::DivIDCounter++;
-	
-	my $txt=($hidden)?'▶':'▼';
-	
-	print qq{<button type="button" class="divToggle indent$DivLevel" onclick="toggleDiv(this,'$::DivIDCounter')">$txt</button>};
-	# print qq{<span class="divToggle indent$DivLevel" onclick="toggleDiv(this,'$::DivIDCounter')">$txt</span>};
-	
-	$::DivIDCounter;
-}
 sub percentEscape {
 	
+	my $self=shift;
 	my $s=shift;
 	
 	# $s=~s/([^a-zA-Z0-9_\-.\/])/uc sprintf("%%%02x",ord($1))/eg;
