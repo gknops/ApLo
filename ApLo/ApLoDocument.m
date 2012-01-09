@@ -16,6 +16,7 @@
 	
 	if((self=[super init]))
 	{
+		readBuffer=[[NSMutableData alloc]init];
 	}
 	
 	return self;
@@ -26,6 +27,8 @@
 	// Deallocates the receiver.
 	// 
 	[[NSNotificationCenter defaultCenter]removeObserver:self];
+	
+	[readBuffer release];
 	
 	[super dealloc];
 }
@@ -315,6 +318,52 @@
 	
 	return parserPath;
 }
+- (void)processNewData {
+	
+	NSString	*html=nil;
+	
+	while((html=[self getLineFromBuffer]))
+	{
+		// <script type="text/javascript">toggleVisibilityOfElementsNamed('levelID00007');</script>
+		if([html hasPrefix:@"<script type=\"text/javascript\">"] && [html hasSuffix:@"</script>"])
+		{
+			NSString	*js=[html substringWithRange:NSMakeRange(31,[html length]-40)];
+			
+			[aploWebView stringByEvaluatingJavaScriptFromString:js];
+		}
+		else
+		{
+			[self appendHTML:html];
+		}
+	}
+}
+- (NSString *)getLineFromBuffer {
+	
+	NSString	*line=nil;
+	
+	@synchronized(readBuffer)
+	{
+		const void	*bytes=[readBuffer bytes];
+		const void	*p=strnstr(bytes,"\n",[readBuffer length]);
+		
+		if(p)
+		{
+			line=[[[NSString alloc]
+				initWithBytes:bytes
+				length:p-bytes
+				encoding:NSUTF8StringEncoding
+			]autorelease];
+			
+			[readBuffer
+				replaceBytesInRange:NSMakeRange(0,p-bytes+1)
+				withBytes:NULL
+				length:0
+			];
+		}
+	}
+	
+	return line;
+}
 
 //*****************************************************************************
 // WebFrameLoadDelegate Protocol
@@ -374,15 +423,12 @@
 		return;
 	}
 	
+	@synchronized(readBuffer)
+	{
+		[readBuffer appendData:data];
+	}
 	
-    NSString	*html=[[NSString alloc]
-		initWithData:data
-		encoding:NSUTF8StringEncoding
-	];
-	
-	[self appendHTML:html];
-	
-	[html release];
+	[self processNewData];
 	
 	if(logParser) [logParserFH readInBackgroundAndNotify];
 }

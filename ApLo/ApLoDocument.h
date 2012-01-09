@@ -13,6 +13,7 @@
 	NSTask								*logParser;
 	NSFileHandle						*logParserFH;
 	
+	NSMutableData						*readBuffer;
 	
 	
 	PROP(assign,IBOutlet) NSSearchField	*searchField;
@@ -76,6 +77,8 @@
 - (NSString *)readFromParser:(NSString *)parserPath withFlag:(NSString *)flag;
 - (void)appendHTML:(NSString *)html;
 - (NSString *)parserPath;
+- (void)processNewData;
+- (NSString *)getLineFromBuffer;
 
 //*****************************************************************************
 // WebFrameLoadDelegate Protocol
