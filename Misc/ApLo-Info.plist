@@ -20,21 +20,10 @@
 				<string>????</string>
 			</array>
 			<key>CFBundleTypeRole</key>
-			<string>Editor</string>
+			<string>Viewer</string>
 			<key>NSDocumentClass</key>
 			<string>ApLoDocument</string>
 		</dict>
-	</array>
-	<key>CFBundleURLTypes</key>
-	<array>
-	    <dict>
-	        <key>CFBundleURLName</key>
-	        <string>ApLo URL</string>
-	        <key>CFBundleURLSchemes</key>
-	        <array>
-	            <string>aplo</string>
-	        </array>
-	    </dict>
 	</array>
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
@@ -52,6 +41,17 @@
 	<string>1.0</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>ApLo URL</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>aplo</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleVersion</key>
 	<string>1</string>
 	<key>LSMinimumSystemVersion</key>

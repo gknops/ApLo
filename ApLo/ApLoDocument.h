@@ -24,6 +24,8 @@
 	PROP(assign) NSInteger				numMatches;
 	
 	//VPROP(assign) BOOL				searchButtonsEnabled;
+	
+	PROP(retain) NSDictionary			*taskEnvironment;
 }
 @property (assign) IBOutlet	NSSearchField	*searchField;
 @property (assign) IBOutlet	WebView			*aploWebView;
@@ -31,6 +33,7 @@
 @property (copy,nonatomic)		NSString		*searchString;
 @property (assign)				NSInteger		numMatches;
 @property (assign)				BOOL			searchButtonsEnabled;
+@property (retain)				NSDictionary	*taskEnvironment;
 
 //*****************************************************************************
 // Factory methods
@@ -100,6 +103,7 @@
 //*****************************************************************************
 // Synthesized Accessors
 //*****************************************************************************
+// @synthesize taskEnvironment;
 // @synthesize searchField;
 // @synthesize searchString;
 // @synthesize numMatches;

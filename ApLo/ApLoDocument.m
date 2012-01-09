@@ -44,43 +44,74 @@
 }
 - (void)windowControllerDidLoadNib:(NSWindowController *)aController {
 	
-	DLog(@"%@  aController: %@  (%@)",_CMD,aController,self);
+	NSString	*windowName=nil;
 	
-	// [aController setShouldCascadeWindows:NO];
+	if(self.taskEnvironment)
+	{
+		NSString	*windowName=[self.taskEnvironment objectForKey:@"APLO_WINDOW_NAME"];
+		
+		if(windowName)
+		{
+			[aController setShouldCascadeWindows:NO];
+			[aController setWindowFrameAutosaveName:windowName];
+			[self setDisplayName:windowName];
+		}
+	}
 	
 	[super windowControllerDidLoadNib:aController];
-	
-	// [[aploWebView window]setFrameAutosaveName:@"xxx"];
 	
 	[aploWebView setPreferencesIdentifier:@"ApLoWebViewPreferences"];
 	[aploWebView setFrameLoadDelegate:self];
 	
-	[self startMonitoring:self];
+	if(self.taskEnvironment)
+	{
+		[self startMonitoring:self];
+	}
 }
 - (NSData *)dataOfType:(NSString *)typeName error:(NSError **)outError {
 	
-	/*
-	 Insert code here to write your document to data of the specified type. If outError != NULL, ensure that you create and set an appropriate error when returning nil.
-	You can also choose to override -fileWrapperOfType:error:, -writeToURL:ofType:error:, or -writeToURL:ofType:forSaveOperation:originalContentsURL:error: instead.
-	*/
-	NSException *exception = [NSException exceptionWithName:@"UnimplementedMethod" reason:[NSString stringWithFormat:@"%@ is unimplemented", NSStringFromSelector(_cmd)] userInfo:nil];
-	@throw exception;
 	return nil;
 }
 - (BOOL)readFromData:(NSData *)data ofType:(NSString *)typeName error:(NSError **)outError {
 	
-	/*
-	Insert code here to read your document from the given data of the specified type. If outError != NULL, ensure that you create and set an appropriate error when returning NO.
-	You can also choose to override -readFromFileWrapper:ofType:error: or -readFromURL:ofType:error: instead.
-	If you override either of these, you should also override -isEntireFileLoaded to return NO if the contents are lazily loaded.
-	*/
-	NSException *exception = [NSException exceptionWithName:@"UnimplementedMethod" reason:[NSString stringWithFormat:@"%@ is unimplemented", NSStringFromSelector(_cmd)] userInfo:nil];
-	@throw exception;
+	NSString			*envString=[[NSString alloc]initWithData:data encoding:NSUTF8StringEncoding];
+	NSArray				*lines=[envString componentsSeparatedByString:@"\n"];
+	NSMutableDictionary	*newEnv=[[NSMutableDictionary alloc]init];
+	
+	for(NSString *line in lines)
+	{
+		NSArray	*a=[line componentsSeparatedByString:@"="];
+		
+		if([a count]==2 && [[a objectAtIndex:0]length]>0)
+		{
+			[newEnv setObject:[a objectAtIndex:1] forKey:[a objectAtIndex:0]];
+		}
+	}
+	
+	self.taskEnvironment=newEnv;
+	
+	[envString release];
+	[newEnv release];
+	
+	if([self.taskEnvironment objectForKey:@"APLO_DELETE_FILE"])
+	{
+		NSString	*fileToDelete=[self.taskEnvironment objectForKey:@"APLO_DELETE_FILE"];
+		NSError		*error=nil;
+		
+		if(![[NSFileManager defaultManager]
+			removeItemAtPath:fileToDelete
+			error:&error
+		])
+		{
+			ERRLog(@"Error deleting file at '%@'",fileToDelete);
+		}
+	}
+	
 	return YES;
 }
 + (BOOL)autosavesInPlace {
 	
-    return YES;
+    return NO;
 }
 
 //*****************************************************************************
@@ -217,8 +248,6 @@
 //*****************************************************************************
 - (void)startMonitoring:sender {
 	
-	DLog(@"%@  sender: %@  (%@)",_CMD,sender,self);
-	
 	NSURL	*templateURL=[[NSBundle bundleForClass:[self class]]
 		URLForResource:@"Template"
 		withExtension:@"html"
@@ -241,13 +270,7 @@
 	html=[html stringByReplacingOccurrencesOfString:@"/*PARSER_CSS_HERE*/" withString:css];
 	html=[html stringByReplacingOccurrencesOfString:@"/*PARSER_JAVASCRIPT_HERE*/" withString:js];
 	
-	DLog(@"html: %@",html);
-	
 	[[aploWebView mainFrame]loadHTMLString:html baseURL:[NSURL URLWithString:@"file:///"]];
-	
-	// [[aploWebView mainFrame]
-	// 	loadRequest:[NSURLRequest requestWithURL:templateURL]
-	// ];
 }
 - (NSString *)readFromParser:(NSString *)parserPath withFlag:(NSString *)flag {
 	
@@ -274,8 +297,6 @@
 	// 
 	// // There should be just one in valid HTML, so get the first DOMElement.
 	// DOMHTMLElement	*bodyNode=(DOMHTMLElement *)[bodyNodeList item:0];
-	
-	DLog(@"appendHTML: %@",html);
 	
 	
 	DOMDocument			*doc=[[aploWebView mainFrame]DOMDocument];
@@ -307,16 +328,19 @@
 }
 - (NSString *)parserPath {
 	
-	NSString	*parserName=@"xcodebuildParser";
+	// NSString	*parserName=@"xcodebuildParser";
+	// 
+	// NSString	*parserPath=[[NSBundle bundleForClass:[self class]]
+	// 	pathForResource:parserName
+	// 	ofType:nil
+	// ];
+	// 
+	// ASSERT(parserPath,@"Could not find parser '%@'",parserName);
 	
-	NSString	*parserPath=[[NSBundle bundleForClass:[self class]]
-		pathForResource:parserName
-		ofType:nil
-	];
+	ASSERT([taskEnvironment objectForKey:@"APLO_PARSER_PATH"],@"APLO_PARSER_PATH not defined!");
 	
-	ASSERT(parserPath,@"Could not find parser '%@'",parserName);
 	
-	return parserPath;
+	return [taskEnvironment objectForKey:@"APLO_PARSER_PATH"];
 }
 - (void)processNewData {
 	
@@ -385,8 +409,6 @@
 	NSString	*parserPath=[self parserPath];
 	NSPipe		*myPipe=[NSPipe pipe];
 	
-	ASSERT(parserPath,@"Could not locate logParser!");
-	
 	logParser=[[NSTask alloc]init];
 	
 	[logParser setLaunchPath:parserPath];
@@ -395,6 +417,11 @@
 		@"/Users/gerti/Clients/Harte-Hanks/Projects/AnvilSuite2",
 		nil
 	]];
+	
+	if(taskEnvironment)
+	{
+		[logParser setEnvironment:taskEnvironment];
+	}
 	
 	[logParser setStandardOutput:myPipe];
 	
@@ -464,6 +491,7 @@
 //*****************************************************************************
 // Synthesized Accessors
 //*****************************************************************************
+@synthesize taskEnvironment;
 @synthesize searchField;
 @synthesize searchString;
 @synthesize numMatches;

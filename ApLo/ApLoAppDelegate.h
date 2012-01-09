@@ -11,13 +11,8 @@
 }
 
 //*****************************************************************************
-// Factory methods
+// NSApplicationDelegate Protocol
 //*****************************************************************************
-- (id)init;
-
-//*****************************************************************************
-// URL handling
-//*****************************************************************************
-- (void)getUrl:(NSAppleEventDescriptor *)event withReplyEvent:(NSAppleEventDescriptor *)replyEvent;
+- (BOOL)applicationShouldOpenUntitledFile:(NSApplication *)sender;
 
 @end
