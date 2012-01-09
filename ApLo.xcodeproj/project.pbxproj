@@ -19,8 +19,7 @@
 		CB0B297014B3C949007E86A1 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = CB0B296814B3C949007E86A1 /* main.m */; };
 		CB0B297214B3C9DD007E86A1 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB0B297114B3C9DD007E86A1 /* WebKit.framework */; };
 		CB0B297414B3CA31007E86A1 /* Template.html in Resources */ = {isa = PBXBuildFile; fileRef = CB0B297314B3CA31007E86A1 /* Template.html */; };
-		CB0B297614B3D974007E86A1 /* logParser in Resources */ = {isa = PBXBuildFile; fileRef = CB0B297514B3D974007E86A1 /* logParser */; };
-		CB314ABE14BB594D00226C35 /* xcodebuildParser in Resources */ = {isa = PBXBuildFile; fileRef = CB314ABD14BB594D00226C35 /* xcodebuildParser */; };
+		CB314AC014BB910000226C35 /* Parsers in Resources */ = {isa = PBXBuildFile; fileRef = CB314ABF14BB910000226C35 /* Parsers */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -51,8 +50,7 @@
 		CB0B296814B3C949007E86A1 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		CB0B297114B3C9DD007E86A1 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 		CB0B297314B3CA31007E86A1 /* Template.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; name = Template.html; path = Resources/Template.html; sourceTree = "<group>"; };
-		CB0B297514B3D974007E86A1 /* logParser */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; name = logParser; path = Resources/logParser; sourceTree = "<group>"; };
-		CB314ABD14BB594D00226C35 /* xcodebuildParser */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; name = xcodebuildParser; path = Resources/xcodebuildParser; sourceTree = "<group>"; };
+		CB314ABF14BB910000226C35 /* Parsers */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Parsers; path = Resources/Parsers; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -124,8 +122,7 @@
 		CB0B295114B3C703007E86A1 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				CB0B297514B3D974007E86A1 /* logParser */,
-				CB314ABD14BB594D00226C35 /* xcodebuildParser */,
+				CB314ABF14BB910000226C35 /* Parsers */,
 				CB0B297314B3CA31007E86A1 /* Template.html */,
 				CB0B295214B3C71F007E86A1 /* ApLoDocument.xib */,
 				CB0B295414B3C71F007E86A1 /* Credits.rtf */,
@@ -216,8 +213,7 @@
 				CB0B295C14B3C71F007E86A1 /* InfoPlist.strings in Resources */,
 				CB0B295D14B3C71F007E86A1 /* MainMenu.xib in Resources */,
 				CB0B297414B3CA31007E86A1 /* Template.html in Resources */,
-				CB0B297614B3D974007E86A1 /* logParser in Resources */,
-				CB314ABE14BB594D00226C35 /* xcodebuildParser in Resources */,
+				CB314AC014BB910000226C35 /* Parsers in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

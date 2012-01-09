@@ -18,6 +18,13 @@
 	if((self=[super init]))
 	{
 		readBuffer=[[NSMutableData alloc]init];
+		
+	    [[NSNotificationCenter defaultCenter]
+			addObserver:self
+			selector:@selector(defaultsChanged:)  
+			name:NSUserDefaultsDidChangeNotification
+			object:nil
+		];
 	}
 	
 	return self;
@@ -42,6 +49,8 @@
 	return @"ApLoDocument";
 }
 - (void)windowControllerDidLoadNib:(NSWindowController *)aController {
+	
+	[self defaultsChanged:nil];
 	
 	if(self.taskEnvironment)
 	{
@@ -294,22 +303,6 @@
 		[bodyNode setValue:[bodyNode valueForKey:@"scrollHeight"] forKey:@"scrollTop"];
 	}
 }
-- (NSString *)parserPath {
-	
-	// NSString	*parserName=@"xcodebuildParser";
-	// 
-	// NSString	*parserPath=[[NSBundle bundleForClass:[self class]]
-	// 	pathForResource:parserName
-	// 	ofType:nil
-	// ];
-	// 
-	// ASSERT(parserPath,@"Could not find parser '%@'",parserName);
-	
-	ASSERT([taskEnvironment objectForKey:@"APLO_PARSER_PATH"],@"APLO_PARSER_PATH not defined!");
-	
-	
-	return [taskEnvironment objectForKey:@"APLO_PARSER_PATH"];
-}
 - (void)processNewData {
 	
 	NSString	*html=nil;
@@ -403,6 +396,35 @@
 //*****************************************************************************
 // Parser related methods
 //*****************************************************************************
+- (NSString *)parserPath {
+	
+	// NSString	*parserName=@"xcodebuildParser";
+	// 
+	// NSString	*parserPath=[[NSBundle bundleForClass:[self class]]
+	// 	pathForResource:parserName
+	// 	ofType:nil
+	// ];
+	// 
+	// ASSERT(parserPath,@"Could not find parser '%@'",parserName);
+	
+	NSString	*path=[taskEnvironment objectForKey:@"APLO_PARSER_PATH"];
+	
+	ASSERT(path,@"APLO_PARSER_PATH not defined!");
+	
+	if(![path hasPrefix:@"/"])
+	{
+		NSString	*p=[path stringByDeletingPathExtension];
+		NSString	*e=[path pathExtension];
+		
+		path=[[NSBundle bundleForClass:[self class]]
+			pathForResource:p
+			ofType:e
+			inDirectory:@"Parsers"
+		];
+	}
+	
+	return path;
+}
 - (void)startParser {
 	
 	[self terminateParser];
@@ -473,6 +495,19 @@
 	[logParser terminate];
 	[logParser release];
 	logParser=nil;
+}
+
+//*****************************************************************************
+// Observers
+//*****************************************************************************
+- (void)defaultsChanged:(NSNotification *)aNotification {
+	
+	float	fs=[[NSUserDefaults standardUserDefaults]floatForKey:@"ApLoTextSizeMultiplier"];
+	
+	if(fs>0.1)
+	{
+		[aploWebView setTextSizeMultiplier:fs];
+	}
 }
 
 //*****************************************************************************

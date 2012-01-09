@@ -79,7 +79,6 @@
 - (void)startMonitoring:sender;
 - (NSString *)readFromParser:(NSString *)parserPath withFlag:(NSString *)flag;
 - (void)appendHTML:(NSString *)html;
-- (NSString *)parserPath;
 - (void)processNewData;
 - (NSString *)getLineFromBuffer;
 - (void)deleteApLoFileIfRequested;
@@ -93,9 +92,15 @@
 //*****************************************************************************
 // Parser related methods
 //*****************************************************************************
+- (NSString *)parserPath;
 - (void)startParser;
 - (void)readFromParser:(NSNotification *)notification;
 - (void)terminateParser;
+
+//*****************************************************************************
+// Observers
+//*****************************************************************************
+- (void)defaultsChanged:(NSNotification *)aNotification;
 
 //*****************************************************************************
 // NSWindowDelegate Protocol
