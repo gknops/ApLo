@@ -1,0 +1,134 @@
+#!/usr/bin/perl -w
+###############################################################################
+#	Copyright 2012 BITart Gerd Knops,  All rights reserved.
+#
+#	Project	: ApLo
+#	File	: logParser
+#	Author	: Gerd Knops gerti@BITart.com
+#
+###############################################################################
+#
+#	History:
+#	120103 Creation of file
+#
+###############################################################################
+#
+#	Description:
+#	Parses system log, prepares for ApLo
+#
+###############################################################################
+#
+# DISCLAIMER
+#
+# BITart and Gerd Knops make no warranties, representations or commitments
+# with regard to the contents of this software. BITart and Gerd Knops
+# specifically disclaim any and all warranties, whether express, implied or
+# statutory, including, but not limited to, any warranty of merchantability
+# or fitness for a particular purpose, and non-infringement. Under no
+# circumstances will BITart or Gerd Knops be liable for loss of data,
+# special, incidental or consequential damages out of the use of this
+# software, even if those damages were foreseeable, or BITart or Gerd Knops
+# was informed of their potential.
+#
+###############################################################################
+# Configuration
+###############################################################################
+	
+	use strict;
+	
+	$|=1;
+
+###############################################################################
+# Main
+###############################################################################
+	
+	our	$AppID=shift;
+	our $ProjectRoot=shift;
+	
+	our %PathLookup;
+	
+	my %lu=();
+	
+	# open(IN,"syslog -w all -k Sender Seq $AppID|")
+	open(IN,"syslog -k Sender Seq $AppID|")
+	# open(IN,"syslog -w 0 -k Sender Seq $AppID|")
+		or die("Can't open 'syslog -w all -k Sender Seq $AppID|' for read: $!\n");
+	while(<IN>)
+	{
+		chomp();
+		
+		# Remove syslog prefix
+		# Dec 29 15:30:19 atlantis [0x0-0xc74c74].com.hhshoppers.Forge[91260] <Notice>:
+		s/^\S+\s+\d+\s+\d+\:\d+\:\d+\s+\S+\s+\S+\s*<([^>]+)>\:\s?//;
+		
+		my $syslogSeverity=$1;
+		
+		if(s/^(([^:]+):(\d+):)//)
+		{
+			my $path=$2;
+			my $line=$3;
+			
+			if(substr($path,0,1) ne '/')
+			{
+				$path=lookupAbsolutePath($path);
+			}
+			else
+			{
+				$path=percentEscape($path);
+			}
+			
+			$_=qq{<a href="txmt://open/?url=file://$path&line=$line">$1</a>$_};
+		}
+		
+		print qq{<span class="Syslog$syslogSeverity">$_</span><br />\n};
+	}
+	close(IN);
+	
+
+###############################################################################
+# Subroutines
+###############################################################################
+sub lookupAbsolutePath {
+	
+	my $file=shift;
+	
+	createPathLookup($ProjectRoot) unless(%PathLookup);
+	
+	return $PathLookup{$file} if(exists($PathLookup{$file}));
+	
+	$file;
+}
+sub createPathLookup {
+	
+	my $dir=shift;
+	
+	opendir(DIR,"$dir") or die("Can't read directory '$dir': $!\n");
+	my @files=grep { -f "$dir/$_" } readdir(DIR);
+	closedir(DIR);
+	
+	foreach my $file (@files)
+	{
+		$PathLookup{$file}=percentEscape("$dir/$file");
+	}
+	
+	opendir(DIR,"$dir") or die("Can't read directory '$dir': $!\n");
+	my @dirs=grep { !/^\./ && -d "$dir/$_" } readdir(DIR);
+	closedir(DIR);
+	
+	foreach my $sdir (@dirs)
+	{
+		createPathLookup("$dir/$sdir");
+	}
+}
+sub percentEscape {
+	
+	my $s=shift;
+	
+	# $s=~s/([^a-zA-Z0-9_\-.\/])/uc sprintf("%%%02x",ord($1))/eg;
+	$s=~s/(\s|[]\!\*\'\(\)\;\:\@\&\=\+\$\,\?\#\[\]])/uc sprintf("%%%02x",ord($1))/eg;
+	
+	$s;
+}
+
+1;
+############################################################################EOF

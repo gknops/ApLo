@@ -39,6 +39,7 @@
 	#define DLog(...)
 #endif
 
+#define	WLog(format,...) NSLog(@"%s:%d: WARNING: "format,__FILE__,__LINE__,##__VA_ARGS__);
 #define	ERRLog(format,...) NSLog(@"%s:%d: ERROR: "format,__FILE__,__LINE__,##__VA_ARGS__);
 #define	ASSERTLog(format,...) NSLog(@"%s:%d: ASSERTION: "format,__FILE__,__LINE__,##__VA_ARGS__);
 

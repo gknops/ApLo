@@ -12,6 +12,7 @@
 {
 	NSTask								*logParser;
 	NSFileHandle						*logParserFH;
+	NSFileHandle						*logParserErrorFH;
 	
 	NSMutableData						*readBuffer;
 	
@@ -95,6 +96,7 @@
 - (NSString *)parserPath;
 - (void)startParser;
 - (void)readFromParser:(NSNotification *)notification;
+- (void)readErrorFromParser:(NSNotification *)notification;
 - (void)terminateParser;
 
 //*****************************************************************************
@@ -106,6 +108,7 @@
 // NSWindowDelegate Protocol
 //*****************************************************************************
 - (void)windowDidBecomeKey:(NSNotification *)notification;
+- (void)windowWillClose:(NSNotification *)notification;
 
 //*****************************************************************************
 // Synthesized Accessors

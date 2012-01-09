@@ -21,7 +21,7 @@
 		
 	    [[NSNotificationCenter defaultCenter]
 			addObserver:self
-			selector:@selector(defaultsChanged:)  
+			selector:@selector(defaultsChanged:)
 			name:NSUserDefaultsDidChangeNotification
 			object:nil
 		];
@@ -398,15 +398,6 @@
 //*****************************************************************************
 - (NSString *)parserPath {
 	
-	// NSString	*parserName=@"xcodebuildParser";
-	// 
-	// NSString	*parserPath=[[NSBundle bundleForClass:[self class]]
-	// 	pathForResource:parserName
-	// 	ofType:nil
-	// ];
-	// 
-	// ASSERT(parserPath,@"Could not find parser '%@'",parserName);
-	
 	NSString	*path=[taskEnvironment objectForKey:@"APLO_PARSER_PATH"];
 	
 	ASSERT(path,@"APLO_PARSER_PATH not defined!");
@@ -421,6 +412,8 @@
 			ofType:e
 			inDirectory:@"Parsers"
 		];
+		
+		ASSERT(path,@"Could not find parser '%@.%@'",p,e);
 	}
 	
 	return path;
@@ -431,6 +424,7 @@
 	
 	NSString	*parserPath=[self parserPath];
 	NSPipe		*myPipe=[NSPipe pipe];
+	NSPipe		*myErrPipe=[NSPipe pipe];
 	
 	logParser=[[NSTask alloc]init];
 	
@@ -444,11 +438,20 @@
 	if(taskEnvironment)
 	{
 		[logParser setEnvironment:taskEnvironment];
+		
+		NSString	*cwd=[taskEnvironment objectForKey:@"APLO_CWD"];
+		
+		if(cwd)
+		{
+			[logParser setCurrentDirectoryPath:cwd];
+		}
 	}
 	
 	[logParser setStandardOutput:myPipe];
+	[logParser setStandardError:myErrPipe];
 	
 	logParserFH=[myPipe fileHandleForReading];
+	logParserErrorFH=[myErrPipe fileHandleForReading];
 	
     [[NSNotificationCenter defaultCenter]addObserver:self
         selector:@selector(readFromParser:)
@@ -456,7 +459,14 @@
         object:logParserFH
 	];
 	
+    [[NSNotificationCenter defaultCenter]addObserver:self
+        selector:@selector(readErrorFromParser:)
+        name:NSFileHandleReadCompletionNotification
+        object:logParserErrorFH
+	];
+	
 	[logParserFH readInBackgroundAndNotify];
+	[logParserErrorFH readInBackgroundAndNotify];
 	
 	[logParser launch];
 }
@@ -482,6 +492,35 @@
 	
 	if(logParser) [logParserFH readInBackgroundAndNotify];
 }
+- (void)readErrorFromParser:(NSNotification *)notification {
+	
+    if([notification object]!=logParserErrorFH) return;
+	
+    NSData		*data=[[notification userInfo]objectForKey:NSFileHandleNotificationDataItem];
+	
+	if(!data || [data length]==0)
+	{
+		[self terminateParser];
+		
+		return;
+	}
+	
+	NSString	*errMsg=[[NSString alloc]
+		initWithData:data
+		encoding:NSUTF8StringEncoding
+	];
+	
+	NSString	*html=[NSString stringWithFormat:
+		@"<div class=\"scriptError\">%@</div>\n",
+		errMsg
+	];
+	
+	[errMsg release];
+	
+	[self appendHTML:html];
+	
+	if(logParser) [logParserErrorFH readInBackgroundAndNotify];
+}
 - (void)terminateParser {
 	
 	if(!logParser) return;
@@ -492,6 +531,7 @@
 	];
 	
 	logParserFH=nil;
+	logParserErrorFH=nil;
 	[logParser terminate];
 	[logParser release];
 	logParser=nil;
@@ -522,6 +562,10 @@
 	{
 		self.searchString=s;
 	}
+}
+- (void)windowWillClose:(NSNotification *)notification {
+	
+	[self terminateParser];
 }
 
 //*****************************************************************************
