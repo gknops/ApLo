@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		CB09672B14B4DCA4002D3B48 /* ApLoDocumentWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = CB09672A14B4DCA4002D3B48 /* ApLoDocumentWindow.m */; };
 		CB09673414B8ACBD002D3B48 /* ApLoAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = CB09673314B8ACBD002D3B48 /* ApLoAppDelegate.m */; };
-		CB09673714B8B5AA002D3B48 /* ApLoApplication.m in Sources */ = {isa = PBXBuildFile; fileRef = CB09673614B8B5AA002D3B48 /* ApLoApplication.m */; };
 		CB0B292D14B3C2A2007E86A1 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB0B292C14B3C2A2007E86A1 /* Cocoa.framework */; };
 		CB0B294014B3C2A2007E86A1 /* ApLoDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = CB0B293F14B3C2A2007E86A1 /* ApLoDocument.m */; };
 		CB0B294D14B3C2B4007E86A1 /* ApLo.icns in Resources */ = {isa = PBXBuildFile; fileRef = CB0B294C14B3C2B4007E86A1 /* ApLo.icns */; };
@@ -21,6 +20,7 @@
 		CB0B297214B3C9DD007E86A1 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB0B297114B3C9DD007E86A1 /* WebKit.framework */; };
 		CB0B297414B3CA31007E86A1 /* Template.html in Resources */ = {isa = PBXBuildFile; fileRef = CB0B297314B3CA31007E86A1 /* Template.html */; };
 		CB0B297614B3D974007E86A1 /* logParser in Resources */ = {isa = PBXBuildFile; fileRef = CB0B297514B3D974007E86A1 /* logParser */; };
+		CB314ABE14BB594D00226C35 /* xcodebuildParser in Resources */ = {isa = PBXBuildFile; fileRef = CB314ABD14BB594D00226C35 /* xcodebuildParser */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,8 +28,6 @@
 		CB09672A14B4DCA4002D3B48 /* ApLoDocumentWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ApLoDocumentWindow.m; sourceTree = "<group>"; };
 		CB09673214B8ACBD002D3B48 /* ApLoAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApLoAppDelegate.h; sourceTree = "<group>"; };
 		CB09673314B8ACBD002D3B48 /* ApLoAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ApLoAppDelegate.m; sourceTree = "<group>"; };
-		CB09673514B8B5AA002D3B48 /* ApLoApplication.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApLoApplication.h; sourceTree = "<group>"; };
-		CB09673614B8B5AA002D3B48 /* ApLoApplication.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ApLoApplication.m; sourceTree = "<group>"; };
 		CB0B292814B3C2A2007E86A1 /* ApLo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ApLo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CB0B292C14B3C2A2007E86A1 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		CB0B292F14B3C2A2007E86A1 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -54,6 +52,7 @@
 		CB0B297114B3C9DD007E86A1 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 		CB0B297314B3CA31007E86A1 /* Template.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; name = Template.html; path = Resources/Template.html; sourceTree = "<group>"; };
 		CB0B297514B3D974007E86A1 /* logParser */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; name = logParser; path = Resources/logParser; sourceTree = "<group>"; };
+		CB314ABD14BB594D00226C35 /* xcodebuildParser */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; name = xcodebuildParser; path = Resources/xcodebuildParser; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -114,8 +113,6 @@
 			children = (
 				CB09673214B8ACBD002D3B48 /* ApLoAppDelegate.h */,
 				CB09673314B8ACBD002D3B48 /* ApLoAppDelegate.m */,
-				CB09673514B8B5AA002D3B48 /* ApLoApplication.h */,
-				CB09673614B8B5AA002D3B48 /* ApLoApplication.m */,
 				CB0B293E14B3C2A2007E86A1 /* ApLoDocument.h */,
 				CB0B293F14B3C2A2007E86A1 /* ApLoDocument.m */,
 				CB09672914B4DCA4002D3B48 /* ApLoDocumentWindow.h */,
@@ -128,6 +125,7 @@
 			isa = PBXGroup;
 			children = (
 				CB0B297514B3D974007E86A1 /* logParser */,
+				CB314ABD14BB594D00226C35 /* xcodebuildParser */,
 				CB0B297314B3CA31007E86A1 /* Template.html */,
 				CB0B295214B3C71F007E86A1 /* ApLoDocument.xib */,
 				CB0B295414B3C71F007E86A1 /* Credits.rtf */,
@@ -219,6 +217,7 @@
 				CB0B295D14B3C71F007E86A1 /* MainMenu.xib in Resources */,
 				CB0B297414B3CA31007E86A1 /* Template.html in Resources */,
 				CB0B297614B3D974007E86A1 /* logParser in Resources */,
+				CB314ABE14BB594D00226C35 /* xcodebuildParser in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -233,7 +232,6 @@
 				CB0B297014B3C949007E86A1 /* main.m in Sources */,
 				CB09672B14B4DCA4002D3B48 /* ApLoDocumentWindow.m in Sources */,
 				CB09673414B8ACBD002D3B48 /* ApLoAppDelegate.m in Sources */,
-				CB09673714B8B5AA002D3B48 /* ApLoApplication.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

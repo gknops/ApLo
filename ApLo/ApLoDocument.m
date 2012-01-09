@@ -232,26 +232,36 @@
 	ASSERT(html,@"Could not load Template.html!");
 	
 	NSString	*parserPath=[self parserPath];
-	NSTask		*task=[NSTask
-		launchedTaskWithLaunchPath:parserPath
-		arguments:[NSArray arrayWthObjects:@"-js",nil]
-	];
+	NSString	*css=[self readFromParser:parserPath withFlag:@"-css"];
+	NSString	*js=[self readFromParser:parserPath withFlag:@"-js"];
 	
+	html=[html stringByReplacingOccurrencesOfString:@"/*PARSER_CSS_HERE*/" withString:css];
+	html=[html stringByReplacingOccurrencesOfString:@"/*PARSER_JAVASCRIPT_HERE*/" withString:js];
 	
-	@@@ read and replace js, css in template
+	DLog(@"html: %@",html);
 	
-	
-	/*PARSER_JAVASCRIPT_HERE*/
-	/*PARSER_CSS_HERE*/
-	
-	
-	
-	
-	[[aploWebView mainFrame]loadHTMLString:html baseURL:@"file:///"];
+	[[aploWebView mainFrame]loadHTMLString:html baseURL:[NSURL URLWithString:@"file:///"]];
 	
 	// [[aploWebView mainFrame]
 	// 	loadRequest:[NSURLRequest requestWithURL:templateURL]
 	// ];
+}
+- (NSString *)readFromParser:(NSString *)parserPath withFlag:(NSString *)flag {
+	
+	NSTask	*task=[[NSTask alloc]init];
+	NSPipe	*pipe=[NSPipe pipe];
+	
+	[task setLaunchPath:parserPath];
+	[task setArguments:[NSArray arrayWithObjects:flag,nil]];
+	[task setStandardOutput:pipe];
+	[task launch];
+	
+	NSData	*data=[[pipe fileHandleForReading]readDataToEndOfFile];
+	
+	[task waitUntilExit];
+	[task release];
+	
+	return  [[[NSString alloc]initWithData:data encoding:NSUTF8StringEncoding]autorelease];
 }
 - (void)appendHTML:(NSString *)html {
 	
@@ -261,6 +271,9 @@
 	// 
 	// // There should be just one in valid HTML, so get the first DOMElement.
 	// DOMHTMLElement	*bodyNode=(DOMHTMLElement *)[bodyNodeList item:0];
+	
+	DLog(@"appendHTML: %@",html);
+	
 	
 	DOMDocument			*doc=[[aploWebView mainFrame]DOMDocument];
 	DOMHTMLBodyElement	*bodyNode=(DOMHTMLBodyElement *)[doc body];
@@ -320,17 +333,14 @@
 	
 	[self terminateParser];
 	
-	NSString	*logParserPath=[[NSBundle bundleForClass:[self class]]
-		pathForResource:@"logParser"
-		ofType:nil
-	];
+	NSString	*parserPath=[self parserPath];
 	NSPipe		*myPipe=[NSPipe pipe];
 	
-	ASSERT(logParserPath,@"Could not locate logParser!");
+	ASSERT(parserPath,@"Could not locate logParser!");
 	
 	logParser=[[NSTask alloc]init];
 	
-	[logParser setLaunchPath:logParserPath];
+	[logParser setLaunchPath:parserPath];
 	[logParser setArguments:[NSArray arrayWithObjects:
 		@"Forge",
 		@"/Users/gerti/Clients/Harte-Hanks/Projects/AnvilSuite2",

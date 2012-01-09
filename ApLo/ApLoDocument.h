@@ -73,7 +73,9 @@
 // Implementation
 //*****************************************************************************
 - (void)startMonitoring:sender;
+- (NSString *)readFromParser:(NSString *)parserPath withFlag:(NSString *)flag;
 - (void)appendHTML:(NSString *)html;
+- (NSString *)parserPath;
 
 //*****************************************************************************
 // WebFrameLoadDelegate Protocol
