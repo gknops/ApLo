@@ -85,7 +85,6 @@
 //*****************************************************************************
 - (IBAction)clear:sender {
 	
-	// [self startMonitoring:self];
 	DOMDocument			*doc=[[aploWebView mainFrame]DOMDocument];
 	DOMHTMLBodyElement	*bodyNode=(DOMHTMLBodyElement *)[doc body];
 	
@@ -224,9 +223,35 @@
 	
 	ASSERT(templateURL,@"Could not locate Template.html!");
 	
-	[[aploWebView mainFrame]
-		loadRequest:[NSURLRequest requestWithURL:templateURL]
+	NSString	*html=[NSString
+		stringWithContentsOfURL:templateURL
+		encoding:NSUTF8StringEncoding
+		error:NULL
 	];
+	
+	ASSERT(html,@"Could not load Template.html!");
+	
+	NSString	*parserPath=[self parserPath];
+	NSTask		*task=[NSTask
+		launchedTaskWithLaunchPath:parserPath
+		arguments:[NSArray arrayWthObjects:@"-js",nil]
+	];
+	
+	
+	@@@ read and replace js, css in template
+	
+	
+	/*PARSER_JAVASCRIPT_HERE*/
+	/*PARSER_CSS_HERE*/
+	
+	
+	
+	
+	[[aploWebView mainFrame]loadHTMLString:html baseURL:@"file:///"];
+	
+	// [[aploWebView mainFrame]
+	// 	loadRequest:[NSURLRequest requestWithURL:templateURL]
+	// ];
 }
 - (void)appendHTML:(NSString *)html {
 	
@@ -263,6 +288,19 @@
 	{
 		[bodyNode setValue:[bodyNode valueForKey:@"scrollHeight"] forKey:@"scrollTop"];
 	}
+}
+- (NSString *)parserPath {
+	
+	NSString	*parserName=@"xcodebuildParser";
+	
+	NSString	*parserPath=[[NSBundle bundleForClass:[self class]]
+		pathForResource:parserName
+		ofType:nil
+	];
+	
+	ASSERT(parserPath,@"Could not find parser '%@'",parserName);
+	
+	return parserPath;
 }
 
 //*****************************************************************************

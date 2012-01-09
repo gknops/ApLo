@@ -26,10 +26,11 @@
 			andEventID:kAEGetURL
 		];
 		[[NSAppleEventManager sharedAppleEventManager]
-		  setEventHandler:self 
-		  andSelector:@selector(getUrl:withReplyEvent:) 
-		  forEventClass:'WWW!' 
-		  andEventID:'OURL'];
+			setEventHandler:self
+			andSelector:@selector(getUrl:withReplyEvent:)
+			forEventClass:'WWW!'
+			andEventID:'OURL'
+		];
 		
 		DLog(@"url: %@",[[NSBundle mainBundle]bundleURL]);
 		
@@ -41,7 +42,6 @@
 		OSStatus httpResult=LSSetDefaultHandlerForURLScheme((CFStringRef)@"aplo", (CFStringRef)bundleID);
 		
 		DLog(@"httpResult new: %d",httpResult);
-		
 	}
 	
 	return self;

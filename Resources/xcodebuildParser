@@ -35,6 +35,7 @@
 ###############################################################################
 	
 	use strict;
+    use feature "switch";
 	
 	#
 	# Note: optionally keyword values are preceded by one or more option flags,
@@ -55,14 +56,25 @@
 		Touch					=> 'Touching',
 	);
 	
-	our $Executable='';	
+	our $ExecutablePath='';
+	our $FinalResult=0;
 	our $MainClass='xcodebuild';
 	
 	our $IDCounter='levelID00000';	
+	our $OIDCounter='oID00000';	
 	
 ###############################################################################
 # Main
 ###############################################################################
+	
+	if(scalar(@ARGV)==1)
+	{
+		given($ARGV[0])
+		{
+			when ('-js') { printJavascript(); exit(0); }
+			when ('-css') { printCSS(); exit(0); }
+		}
+	}
 	
 	our $level=NestedLevel->new();
 	
@@ -118,11 +130,216 @@
 	
 	$level=$level->popTo(0);
 	
+	storeExecutablePath();
+	
+	exit($FinalResult) if($FinalResult);
+	
+	exit(0) unless($ENV{XCBPRUN});
+	
+	$level=$level->newChild(0,'',"Running $ExecutablePath");
+	
+	unless(findExecutablePath())
+	{
+		$level=$level->addResult('Run failed: Executable path unknown');
+		
+		$level=$level->popTo(0);
+		exit(1);
+	}
+	
+	# Run app here!!!
+	
+	
+	$level=$level->addResult('Application terminated');
+	$level=$level->popTo(0);
+	
+	exit(0);
 
 ###############################################################################
 # Subroutines
 ###############################################################################
+sub storeExecutablePath {
+	
+	return unless($ExecutablePath);
+	
+	# TODO: store executable path
+}
+sub findExecutablePath {
+	
+	return 1 if($ExecutablePath);
+	
+	# TODO: find and read stored executable path (if any)
+	
+	return 0;
+}
 
+###############################################################################
+# Javascript & CSS
+###############################################################################
+sub printJavascript {
+	
+	print <<'JAVASCRIPT';
+	function toggleLevel(button,id) {
+	
+		var html=toggleVisibilityOfElementsNamed(id);
+	
+		if(html) button.innerHTML=html;
+	}
+	function toggleVisibilityOfElementsNamed(elementName) {
+	
+	    var elements=document.getElementsByName(elementName);
+	
+		if(elements.length<1) return null;
+	
+		var retVal='▶';
+		var dispVal='none';
+	
+		if(elements[0].style.display=='none')
+		{
+			dispVal='block';
+			retVal='▼';
+		}
+	
+		for(var i=elements.length-1;i>=0;i--)
+		{
+			elements[i].originalFoldValue=dispVal;
+			elements[i].style.display=dispVal;
+		}
+	
+		var foldLevel=indentLevelOfElement(elements[0]);
+	
+		if(dispVal=='none')
+		{
+			foldElementsOfEqualOrHigherLevel(elements[0],foldLevel);
+		}
+		else
+		{
+			restoreElementsOfEqualOrHigherLevel(elements[0],foldLevel);
+		}
+	
+		return retVal;
+	}
+	function indentLevelOfElement(element) {
+	
+		var ls=element.className;
+	
+		if(!ls) return -1;
+	
+		var ls=ls.match(/indent\d+/);
+	
+		if(!ls) return -1;
+	
+		ls=ls[0].match(/\d+/);
+	
+		return parseInt(ls[0]);
+	}
+	function foldElementsOfEqualOrHigherLevel(element,level)
+	{
+		if(!element) return;
+	
+		var l=indentLevelOfElement(element);
+	
+		if(l>=0)
+		{
+			if(l<level) return;
+			var ov=element.style.display;
+			if(!ov) ov='block';
+			element.originalFoldValue=ov;
+			element.style.display='none';
+		}
+	
+		foldElementsOfEqualOrHigherLevel(element.nextSibling,level);
+	}
+	function restoreElementsOfEqualOrHigherLevel(element,level)
+	{
+		if(!element) return;
+	
+		var l=indentLevelOfElement(element);
+	
+		if(l>=0)
+		{
+			if(l<level) return;
+		
+			var ov=element.originalFoldValue;
+		
+			if(ov)
+			{
+				element.style.display=ov;
+			}
+		}
+	
+		restoreElementsOfEqualOrHigherLevel(element.nextSibling,level);
+	}
+JAVASCRIPT
+}
+sub printCSS {
+	
+	print <<'CSS';
+	.xcodebuild {
+		font: 12px "Arial";
+	}
+	.compilerOutput {
+		font-size: 10px;
+	}
+	.monospaced {
+		font: 12px "Monaco", "Courier New", monospace;
+		white-space: pre-wrap;
+	}
+	.indent1 {
+		margin-left: 12px;
+	}
+	.indent2 {
+		margin-left: 24px;
+	}
+	.indent3 {
+		margin-left: 36px;
+	}
+	.indent3 {
+		margin-left: 48px;
+	}
+			
+	.levelToggle {
+		border: none;
+		padding: 0px;
+		margin-right: 4px;
+		background: none;
+		width: 14px;
+	}
+	.isHidden {
+		display: none;
+	}
+			
+	.levelPrefix {
+	}
+	.levelMsg {
+		font-weight: bold;
+	}
+			
+	.okSection, .okHeader {
+		color: white;
+		font-weight: bold;
+		background: Green ;
+	}
+	.okLine {
+		background: PaleGreen;
+	}
+	.errorSection, .errorLevelHeader, .errorHeader {
+		color: white;
+		font-weight: bold;
+		background: DarkRed ;
+	}
+	.errorLevel, .errorLine {
+		background: MistyRose;
+	}
+	.warningLevelHeader {
+		color: white;
+		font-weight: bold;
+		background: DarkKhaki ;
+	}
+	.warningLevel {
+		background: LightGoldenRodYellow;
+	}
+CSS
+};
 
 ###############################################################################
 package NestedLevel;
@@ -198,7 +415,17 @@ sub divStartText {
 	
 	my $classes=join(' ',@classes);
 	
-	qq{<div class="$classes" name="$self->{id}">};
+	my $oid='';
+	
+	if($self->{level}==0)
+	{
+		my $noid=$OIDCounter++;
+		$oid=qq{ id="$noid"};
+		
+		$self->{lastOID}=$noid;
+	}
+	
+	qq{<div class="$classes"$oid name="$self->{id}">};
 }
 sub divEndText {
 	
@@ -244,9 +471,18 @@ sub addResult {
 	
 	my $success=($txt=~/failed/i)?'error':'ok';
 	
+	$FinalResult=($txt=~/failed/i)?1:0;
+	
 	my $child=$self->newChild(1,'',$txt,"${success}Header");
 	
 	$child->addClasses("${success}Line");
+	
+	if(exists($self->{parent}->{lastOID}))
+	{
+		my $oid=$self->{parent}->{lastOID};
+		
+		print qq{<script type="text/javascript">var el=document.getElementById('$oid');el.className+=" ${success}Section";</script>\n};
+	}
 	
 	$child;
 }
@@ -333,7 +569,7 @@ sub newSubSection {
 	
 	my $ex=$self->getPathFromArgs($execArgNo,$text);
 	
-	$Executable=$ex if($ex ne '');
+	$ExecutablePath=$ex if($ex ne '');
 	
 	$pathToDisplay=$self->getPathFromArgs($pathArgNo,$text);
 	$pathToDisplay=~s/.*\///;
