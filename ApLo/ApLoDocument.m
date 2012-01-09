@@ -6,12 +6,13 @@
 // Copyright 2012 BITart Consulting, Gerd Knops. All rights reserved.
 //
 #import "ApLoDocument.h"
+#import "ApLoAppDelegate.h"
 
 @implementation ApLoDocument
 
 //*****************************************************************************
 // Factory methods
-//*****************************************************************************init
+//*****************************************************************************
 - (id)init {
 	
 	if((self=[super init]))
@@ -38,13 +39,9 @@
 //*****************************************************************************
 - (NSString *)windowNibName {
 	
-	DLog(@"%@  (%@)",_CMD,self);
-	
 	return @"ApLoDocument";
 }
 - (void)windowControllerDidLoadNib:(NSWindowController *)aController {
-	
-	NSString	*windowName=nil;
 	
 	if(self.taskEnvironment)
 	{
@@ -74,38 +71,9 @@
 }
 - (BOOL)readFromData:(NSData *)data ofType:(NSString *)typeName error:(NSError **)outError {
 	
-	NSString			*envString=[[NSString alloc]initWithData:data encoding:NSUTF8StringEncoding];
-	NSArray				*lines=[envString componentsSeparatedByString:@"\n"];
-	NSMutableDictionary	*newEnv=[[NSMutableDictionary alloc]init];
+	self.taskEnvironment=[[NSApp delegate]environmentDictionaryFromData:data];
 	
-	for(NSString *line in lines)
-	{
-		NSArray	*a=[line componentsSeparatedByString:@"="];
-		
-		if([a count]==2 && [[a objectAtIndex:0]length]>0)
-		{
-			[newEnv setObject:[a objectAtIndex:1] forKey:[a objectAtIndex:0]];
-		}
-	}
-	
-	self.taskEnvironment=newEnv;
-	
-	[envString release];
-	[newEnv release];
-	
-	if([self.taskEnvironment objectForKey:@"APLO_DELETE_FILE"])
-	{
-		NSString	*fileToDelete=[self.taskEnvironment objectForKey:@"APLO_DELETE_FILE"];
-		NSError		*error=nil;
-		
-		if(![[NSFileManager defaultManager]
-			removeItemAtPath:fileToDelete
-			error:&error
-		])
-		{
-			ERRLog(@"Error deleting file at '%@'",fileToDelete);
-		}
-	}
+	[self deleteApLoFileIfRequested];
 	
 	return YES;
 }
@@ -387,6 +355,39 @@
 	}
 	
 	return line;
+}
+- (void)deleteApLoFileIfRequested {
+	
+	if([self.taskEnvironment objectForKey:@"APLO_DELETE_FILE"])
+	{
+		NSString	*fileToDelete=[self.taskEnvironment objectForKey:@"APLO_DELETE_FILE"];
+		NSError		*error=nil;
+		
+		if(![[NSFileManager defaultManager]
+			removeItemAtPath:fileToDelete
+			error:&error
+		])
+		{
+			ERRLog(@"Error deleting file at '%@'",fileToDelete);
+		}
+	}
+}
+- (BOOL)relaunchWithEnvironment:(NSDictionary *)newEnv {
+	
+	self.taskEnvironment=newEnv;
+	
+	[self deleteApLoFileIfRequested];
+	
+	NSString	*s=[self.taskEnvironment objectForKey:@"APLO_KEEP_WINDOW_CONTENTS"];
+	
+	if(!s || ![s intValue])
+	{
+		[self clear:self];
+	}
+	
+	[self startParser];
+	
+	return YES;
 }
 
 //*****************************************************************************

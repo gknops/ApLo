@@ -37,7 +37,7 @@
 
 //*****************************************************************************
 // Factory methods
-//*****************************************************************************init
+//*****************************************************************************
 - (id)init;
 - (void)dealloc;
 
@@ -82,6 +82,8 @@
 - (NSString *)parserPath;
 - (void)processNewData;
 - (NSString *)getLineFromBuffer;
+- (void)deleteApLoFileIfRequested;
+- (BOOL)relaunchWithEnvironment:(NSDictionary *)newEnv;
 
 //*****************************************************************************
 // WebFrameLoadDelegate Protocol

@@ -14,5 +14,12 @@
 // NSApplicationDelegate Protocol
 //*****************************************************************************
 - (BOOL)applicationShouldOpenUntitledFile:(NSApplication *)sender;
+- (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filename;
+
+//*****************************************************************************
+// Implementation
+//*****************************************************************************
+- (NSDictionary *)environmentDictionaryFromFile:(NSString *)filename;
+- (NSDictionary *)environmentDictionaryFromData:(NSData *)data;
 
 @end
