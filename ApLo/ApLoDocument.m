@@ -305,22 +305,34 @@
 }
 - (void)processNewData {
 	
-	NSString	*html=nil;
+	NSString		*html=nil;
+	NSMutableString	*localBuffer=[[NSMutableString alloc]init];
 	
 	while((html=[self getLineFromBuffer]))
 	{
 		// <script type="text/javascript">toggleVisibilityOfElementsNamed('levelID00007');</script>
 		if([html hasPrefix:@"<script type=\"text/javascript\">"] && [html hasSuffix:@"</script>"])
 		{
+			NSUInteger	lbl=[localBuffer length];
+			
+			if(lbl>0)
+			{
+				[self appendHTML:localBuffer];
+				
+				[localBuffer deleteCharactersInRange:NSMakeRange(0,lbl)];
+			}
+			
 			NSString	*js=[html substringWithRange:NSMakeRange(31,[html length]-40)];
 			
 			[aploWebView stringByEvaluatingJavaScriptFromString:js];
 		}
 		else
 		{
-			[self appendHTML:html];
+			[localBuffer appendString:html];
 		}
 	}
+	
+	if([localBuffer length]>0) [self appendHTML:localBuffer];
 }
 - (NSString *)getLineFromBuffer {
 	
