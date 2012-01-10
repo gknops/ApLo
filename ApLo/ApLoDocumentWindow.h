@@ -8,7 +8,7 @@
 
 @class WebView;
 
-@interface ApLoDocumentWindow: NSPanel
+@interface ApLoDocumentWindow: NSWindow
 {
 	PROP(assign,IBOutlet) WebView	*aploWebView;
 }
