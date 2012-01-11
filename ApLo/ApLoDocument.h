@@ -50,6 +50,7 @@
 - (NSData *)dataOfType:(NSString *)typeName error:(NSError **)outError;
 - (BOOL)readFromData:(NSData *)data ofType:(NSString *)typeName error:(NSError **)outError;
 + (BOOL)autosavesInPlace;
+- (BOOL)isDocumentEdited;
 
 //*****************************************************************************
 // Action methods

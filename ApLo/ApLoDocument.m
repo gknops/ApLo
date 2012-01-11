@@ -90,6 +90,13 @@
 	
     return NO;
 }
+- (BOOL)isDocumentEdited {
+	
+	//
+	// Editing search field would dirty document, so we override this here.
+	// 
+	return NO;
+}
 
 //*****************************************************************************
 // Action methods
