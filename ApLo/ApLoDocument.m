@@ -497,6 +497,8 @@
 	[logParserErrorFH readInBackgroundAndNotify];
 	
 	[logParser launch];
+	
+	[[aploWebView window]orderFrontRegardless];
 }
 - (void)readFromParser:(NSNotification *)notification {
 	

@@ -1,48 +1,5 @@
 
-- when adding html to a window bring it to front without activating app
-- Font +/- buttons are begated next update, probably due to default
-
-
 # ToDo
-
-
-- play sound after build
-
-	if($numErrors>0)
-	{
-		print $output;
-		&playSound('Sosumi');
-		exit(205);
-	}
-	else
-	{
-		#print "$ENV{'TM_FILEPATH'}: OK\n";
-		print $asciiOutput;
-		&playSound('Ping');
-	
-		exit(0);
-	}
-
-	###############################################################################
-	# Subroutines
-	###############################################################################
-	sub playSound
-	{
-		my $sf=shift;
-	
-		my $sp="/System/Library/Sounds/$sf.aiff";
-		my $ps="$ENV{'TM_SUPPORT_PATH'}/bin/play";
-	
-		$ps='/usr/local/bin/playsound' unless(-x $ps);
-	
-		if(-x $ps && -r $sp)
-		{
-			system("'$ps' '$sp' 2>/dev/null");
-		}
-	}
-	
-
-
 
 
 # BlitzTalk WebView
