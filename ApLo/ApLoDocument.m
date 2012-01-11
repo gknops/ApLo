@@ -268,6 +268,8 @@
 }
 - (void)appendHTML:(NSString *)html {
 	
+	// DLog(@"%@  html: %@  (%@)",_CMD,html,self);
+	
 	// Gets a list of all <body></body> nodes.
 	// DOMDocument		*doc=[[aploWebView mainFrame]DOMDocument];
 	// DOMNodeList		*bodyNodeList=[doc getElementsByTagName:@"body"];
@@ -296,7 +298,14 @@
 	// DLog(@"shouldScroll: %d",shouldScroll);
 	
 	// Add the new element to the bodyNode as the last child.
-	[bodyNode appendChild:newNode];
+	
+	DOMNodeList			*nodeList=newNode.childNodes;
+	DOMNode 			*node=nil;
+	
+	while((node=[nodeList item:0]))
+	{
+		[bodyNode appendChild:node];
+	}
 	
 	if(shouldScroll)
 	{
@@ -522,8 +531,10 @@
 		encoding:NSUTF8StringEncoding
 	];
 	
+	WLog(@"Error output from %@: %@",[[self parserPath]lastPathComponent],errMsg);
+	
 	NSString	*html=[NSString stringWithFormat:
-		@"<div class=\"scriptError\">%@</div>\n",
+		@"<div><div class=\"scriptError\">%@</div>\n</div>",
 		errMsg
 	];
 	
