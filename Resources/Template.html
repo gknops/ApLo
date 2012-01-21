@@ -55,6 +55,11 @@
 			    apLoRemoveHighlights();
 			    apLoAddHighlights(document.body,searchString.toLowerCase());
 				
+				if(ApLoMatches.length>0)
+				{
+					apLoSetSelectedMatch(ApLoMatches[ApLoMatches.length-1]);
+				}
+				
 				return ApLoMatches.length;
 			}
 			function apLoRemoveHighlights()

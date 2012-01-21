@@ -203,7 +203,7 @@
 }
 - (void)findWithJS:(NSString *)javascript {
 	
-	if(self.numMatches<2)
+	if(self.numMatches<1)
 	{
 		NSBeep();
 		
@@ -212,6 +212,8 @@
 	
 	[aploWebView stringByEvaluatingJavaScriptFromString:javascript];
 	[self forceWebViewRedraw];
+	
+	if(self.numMatches==1) NSBeep();
 }
 - (BOOL)searchButtonsEnabled {
 	
