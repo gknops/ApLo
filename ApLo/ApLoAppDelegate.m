@@ -36,7 +36,7 @@
 	{
 		if([[doc displayName]isEqualToString:windowName])
 		{
-			return [(ApLoDocument *)doc relaunchWithEnvironment:d];
+			return [(ApLoDocument *)doc relaunchWithEnvironment:d filename:filename];
 		}
 	}
 	

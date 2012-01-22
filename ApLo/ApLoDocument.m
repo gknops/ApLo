@@ -82,7 +82,9 @@
 	
 	self.taskEnvironment=[[NSApp delegate]environmentDictionaryFromData:data];
 	
-	[self deleteApLoFileIfRequested];
+	dispatch_async(dispatch_get_main_queue(),^{
+		[self deleteApLoFileIfRequested:[[self fileURL]path]];
+	});
 	
 	return YES;
 }
@@ -379,27 +381,28 @@
 	
 	return line;
 }
-- (void)deleteApLoFileIfRequested {
+- (void)deleteApLoFileIfRequested:(NSString *)path {
 	
-	if([self.taskEnvironment objectForKey:@"APLO_DELETE_FILE"])
+	NSString	*s=[self.taskEnvironment objectForKey:@"APLO_DELETE_FILE"];
+	
+	if(s && [s intValue] && path)
 	{
-		NSString	*fileToDelete=[self.taskEnvironment objectForKey:@"APLO_DELETE_FILE"];
 		NSError		*error=nil;
 		
 		if(![[NSFileManager defaultManager]
-			removeItemAtPath:fileToDelete
+			removeItemAtPath:path
 			error:&error
 		])
 		{
-			ERRLog(@"Error deleting file at '%@'",fileToDelete);
+			ERRLog(@"Error deleting file at '%@'",path);
 		}
 	}
 }
-- (BOOL)relaunchWithEnvironment:(NSDictionary *)newEnv {
+- (BOOL)relaunchWithEnvironment:(NSDictionary *)newEnv filename:(NSString *)filename {
 	
 	self.taskEnvironment=newEnv;
 	
-	[self deleteApLoFileIfRequested];
+	[self deleteApLoFileIfRequested:filename];
 	
 	NSString	*s=[self.taskEnvironment objectForKey:@"APLO_KEEP_WINDOW_CONTENTS"];
 	

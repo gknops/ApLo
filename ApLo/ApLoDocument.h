@@ -83,8 +83,8 @@
 - (void)appendHTML:(NSString *)html;
 - (void)processNewData;
 - (NSString *)getLineFromBuffer;
-- (void)deleteApLoFileIfRequested;
-- (BOOL)relaunchWithEnvironment:(NSDictionary *)newEnv;
+- (void)deleteApLoFileIfRequested:(NSString *)path;
+- (BOOL)relaunchWithEnvironment:(NSDictionary *)newEnv filename:(NSString *)filename;
 
 //*****************************************************************************
 // WebFrameLoadDelegate Protocol
