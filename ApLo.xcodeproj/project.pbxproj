@@ -20,6 +20,7 @@
 		CB0B297214B3C9DD007E86A1 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB0B297114B3C9DD007E86A1 /* WebKit.framework */; };
 		CB0B297414B3CA31007E86A1 /* Template.html in Resources */ = {isa = PBXBuildFile; fileRef = CB0B297314B3CA31007E86A1 /* Template.html */; };
 		CB314AC014BB910000226C35 /* Parsers in Resources */ = {isa = PBXBuildFile; fileRef = CB314ABF14BB910000226C35 /* Parsers */; };
+		CB34159A14CCA1FA00FCB926 /* README.mdown in Resources */ = {isa = PBXBuildFile; fileRef = CB34159914CCA1FA00FCB926 /* README.mdown */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -51,6 +52,7 @@
 		CB0B297114B3C9DD007E86A1 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 		CB0B297314B3CA31007E86A1 /* Template.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; name = Template.html; path = Resources/Template.html; sourceTree = "<group>"; };
 		CB314ABF14BB910000226C35 /* Parsers */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Parsers; path = Resources/Parsers; sourceTree = "<group>"; };
+		CB34159914CCA1FA00FCB926 /* README.mdown */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.mdown; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -122,6 +124,7 @@
 		CB0B295114B3C703007E86A1 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				CB34159914CCA1FA00FCB926 /* README.mdown */,
 				CB314ABF14BB910000226C35 /* Parsers */,
 				CB0B297314B3CA31007E86A1 /* Template.html */,
 				CB0B295214B3C71F007E86A1 /* ApLoDocument.xib */,
@@ -214,6 +217,7 @@
 				CB0B295D14B3C71F007E86A1 /* MainMenu.xib in Resources */,
 				CB0B297414B3CA31007E86A1 /* Template.html in Resources */,
 				CB314AC014BB910000226C35 /* Parsers in Resources */,
+				CB34159A14CCA1FA00FCB926 /* README.mdown in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
