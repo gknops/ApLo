@@ -74,6 +74,7 @@
 - (BOOL)searchButtonsEnabled;
 + (NSSet *)keyPathsForValuesAffectingSearchButtonsEnabled;
 - (void)forceWebViewRedraw;
+- (void)checkFindPasteboard;
 
 //*****************************************************************************
 // Implementation
@@ -108,7 +109,6 @@
 //*****************************************************************************
 // NSWindowDelegate Protocol
 //*****************************************************************************
-- (void)windowDidBecomeKey:(NSNotification *)notification;
 - (void)windowWillClose:(NSNotification *)notification;
 
 //*****************************************************************************

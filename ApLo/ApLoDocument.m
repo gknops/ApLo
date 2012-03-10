@@ -124,6 +124,7 @@
 	switch(tag)
 	{
 		case NSTextFinderActionShowFindInterface:
+			[self checkFindPasteboard];
 	    	[searchField.window makeFirstResponder:searchField];
 			break;
 		case NSTextFinderActionNextMatch:
@@ -229,6 +230,16 @@
 	
 	[aploWebView makeTextLarger:self];
 	[aploWebView makeTextSmaller:self];
+}
+- (void)checkFindPasteboard {
+	
+    NSPasteboard	*pasteboard=[NSPasteboard pasteboardWithName:NSFindPboard];
+	NSString		*s=[pasteboard stringForType:NSStringPboardType];
+	
+	if(s && [s length]>0 && ![s isEqualToString:searchString])
+	{
+		self.searchString=s;
+	}
 }
 
 //*****************************************************************************
@@ -590,16 +601,6 @@
 //*****************************************************************************
 // NSWindowDelegate Protocol
 //*****************************************************************************
-- (void)windowDidBecomeKey:(NSNotification *)notification {
-	
-    NSPasteboard	*pasteboard=[NSPasteboard pasteboardWithName:NSFindPboard];
-	NSString		*s=[pasteboard stringForType:NSStringPboardType];
-	
-	if(s && [s length]>0 && ![s isEqualToString:searchString])
-	{
-		self.searchString=s;
-	}
-}
 - (void)windowWillClose:(NSNotification *)notification {
 	
 	[self terminateParser];

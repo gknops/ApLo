@@ -31,9 +31,6 @@
 // Logging
 //*****************************************************************************
 #ifdef DEBUG
-	#define CONFIG_DEBUG
-#endif
-#ifdef CONFIG_DEBUG
 	#define	DLog(format,...) NSLog(@"%s:%d: "format,__FILE__,__LINE__,##__VA_ARGS__);
 #else
 	#define DLog(...)
@@ -46,5 +43,6 @@
 //*****************************************************************************
 // Assertions
 //*****************************************************************************
-#define ASSERT(cond,format,...)	if(!(cond)) { ASSERTLog(format,##__VA_ARGS__); }
+#define ASSERT(cond,format,...)	if(!(cond)) { ASSERTLog(format,##__VA_ARGS__); NSAssert(NO,@""); }
 #define SUBCLASS_RESPONSIBILITY ASSERT(NO,@"%@ failed to implement %@!",NSStringFromClass([self class]),_CMD);
+
