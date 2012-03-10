@@ -35,6 +35,7 @@
 ###############################################################################
 	
 	use strict;
+    use feature "switch";
 	
 	$|=1;
 
@@ -42,16 +43,20 @@
 # Main
 ###############################################################################
 	
-	our	$AppID=shift;
-	our $ProjectRoot=shift;
+	if(scalar(@ARGV)==1)
+	{
+		given($ARGV[0])
+		{
+			when ('-js') { printJavascript(); exit(0); }
+			when ('-css') { printCSS(); exit(0); }
+		}
+	}
 	
-	our %PathLookup;
-	
-	my %lu=();
+	our	$AppID=$ENV{APLO_WINDOW_NAME};
 	
 	# open(IN,"syslog -w all -k Sender Seq $AppID|")
-	open(IN,"syslog -k Sender Seq $AppID|")
-	# open(IN,"syslog -w 0 -k Sender Seq $AppID|")
+	# open(IN,"syslog -w 10 -k Sender Seq $AppID|")
+	open(IN,"syslog -w 0 -k Sender Seq $AppID|")
 		or die("Can't open 'syslog -w all -k Sender Seq $AppID|' for read: $!\n");
 	while(<IN>)
 	{
@@ -62,25 +67,26 @@
 		s/^\S+\s+\d+\s+\d+\:\d+\:\d+\s+\S+\s+\S+\s*<([^>]+)>\:\s?//;
 		
 		my $syslogSeverity=$1;
+		my $extraClass='';
+		
+		&htmlEscape;
 		
 		if(s/^(([^:]+):(\d+):)//)
 		{
 			my $path=$2;
 			my $line=$3;
 			
-			if(substr($path,0,1) ne '/')
-			{
-				$path=lookupAbsolutePath($path);
-			}
-			else
-			{
-				$path=percentEscape($path);
-			}
+			my $file=$path;
+			$file=~s/.*\///;
 			
-			$_=qq{<a href="txmt://open/?url=file://$path&line=$line">$1</a>$_};
+			$extraClass=" appOutput$1" if(/^\s*(WARNING|ERROR|ASSERTION)\:/);
+			
+			$path=percentEscape($path);
+			
+			$_=qq{<a href="http://localhost:8091/?message=$path:$line">$file:$line:</a>$_};
 		}
 		
-		print qq{<span class="Syslog$syslogSeverity">$_</span><br />\n};
+		print qq{<span class="appOutput$extraClass">$_</span><br />\n};
 	}
 	close(IN);
 	
@@ -88,37 +94,11 @@
 ###############################################################################
 # Subroutines
 ###############################################################################
-sub lookupAbsolutePath {
+sub htmlEscape {
 	
-	my $file=shift;
-	
-	createPathLookup($ProjectRoot) unless(%PathLookup);
-	
-	return $PathLookup{$file} if(exists($PathLookup{$file}));
-	
-	$file;
-}
-sub createPathLookup {
-	
-	my $dir=shift;
-	
-	opendir(DIR,"$dir") or die("Can't read directory '$dir': $!\n");
-	my @files=grep { -f "$dir/$_" } readdir(DIR);
-	closedir(DIR);
-	
-	foreach my $file (@files)
-	{
-		$PathLookup{$file}=percentEscape("$dir/$file");
-	}
-	
-	opendir(DIR,"$dir") or die("Can't read directory '$dir': $!\n");
-	my @dirs=grep { !/^\./ && -d "$dir/$_" } readdir(DIR);
-	closedir(DIR);
-	
-	foreach my $sdir (@dirs)
-	{
-		createPathLookup("$dir/$sdir");
-	}
+	s/</&lt;/g;
+	s/>/&gt;/g;
+	s/\n/<br \/>/g;
 }
 sub percentEscape {
 	
@@ -129,6 +109,35 @@ sub percentEscape {
 	
 	$s;
 }
+
+###############################################################################
+# Javascript & CSS
+###############################################################################
+sub printJavascript {
+	
+	print <<'JAVASCRIPT';
+JAVASCRIPT
+}
+sub printCSS {
+	
+	print <<'CSS';
+	.appOutput {
+		font: 12px "Monaco", "Courier New", monospace;
+		white-space: pre-wrap;
+	}
+	.appOutputWARNING {
+		color: GoldenRod;
+	}
+	.appOutputERROR {
+		color: FireBrick;
+	}
+	.appOutputASSERTION {
+		color: white;
+		font-weight: bold;
+		background: FireBrick ;
+	}	
+CSS
+};
 
 1;
 ############################################################################EOF
