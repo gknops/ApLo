@@ -37,6 +37,7 @@
 	[[NSNotificationCenter defaultCenter]removeObserver:self];
 	
 	[readBuffer release];
+	self.previewPath=nil;
 	
 	[super dealloc];
 }
@@ -81,6 +82,7 @@
 - (BOOL)readFromData:(NSData *)data ofType:(NSString *)typeName error:(NSError **)outError {
 	
 	self.taskEnvironment=[[NSApp delegate]environmentDictionaryFromData:data];
+	self.previewPath=[self.taskEnvironment objectForKey:@"APLO_PREVIEW_HTML_FILE"];
 	
 	dispatch_async(dispatch_get_main_queue(),^{
 		[self deleteApLoFileIfRequested:[[self fileURL]path]];
@@ -247,6 +249,13 @@
 //*****************************************************************************
 - (void)startMonitoring:sender {
 	
+	if(self.previewPath)
+	{
+		[self showPreview];
+		
+		return;
+	}
+	
 	NSURL	*templateURL=[[NSBundle bundleForClass:[self class]]
 		URLForResource:@"Template"
 		withExtension:@"html"
@@ -412,8 +421,14 @@
 - (BOOL)relaunchWithEnvironment:(NSDictionary *)newEnv filename:(NSString *)filename {
 	
 	self.taskEnvironment=newEnv;
+	self.previewPath=[self.taskEnvironment objectForKey:@"APLO_PREVIEW_HTML_FILE"];
 	
 	[self deleteApLoFileIfRequested:filename];
+	
+	if(self.previewPath)
+	{
+		return [self showPreview];
+	}
 	
 	NSString	*s=[self.taskEnvironment objectForKey:@"APLO_KEEP_WINDOW_CONTENTS"];
 	
@@ -425,6 +440,78 @@
 	[self startParser];
 	
 	return YES;
+}
+- (BOOL)showPreview {
+	
+	NSStringEncoding	stringEncoding;
+	NSError				*error;
+	NSString			*html=[NSString
+		stringWithContentsOfFile:self.previewPath
+		usedEncoding:&stringEncoding
+		error:&error
+	];
+	
+	if(!html)
+	{
+		ERRLog(@"Error loading html from file '%@': %@",self.previewPath,error);
+		
+		return NO;
+	}
+	
+	NSURL	*base=[NSURL fileURLWithPath:[self.previewPath stringByDeletingLastPathComponent]];
+	
+	[[aploWebView mainFrame]loadHTMLString:html baseURL:base];
+	
+	[self showWebInspector];
+	
+	return YES;
+}
+- (void)showWebInspector {
+	
+	Class	inspectorClass=NSClassFromString(@"WebInspector");
+	
+	if(!inspectorClass)
+	{
+		ERRLog(@"Can't find WebInspector class!");
+		
+		return;
+	}
+	
+	id 		inspector=[inspectorClass alloc];
+	
+	if(![inspector respondsToSelector:@selector(initWithWebView:)])
+	{
+		ERRLog(@"WebInspector class doesn't respond to '-initWithWebView:'!");
+		
+		return;
+	}
+	
+	inspector=[inspector performSelector:@selector(initWithWebView:) withObject:aploWebView];
+	
+	if(!inspector)
+	{
+		ERRLog(@"WebInspector: something went wrong during '-initWithWebView:'!");
+		
+		return;
+	}
+	
+	if(![inspector respondsToSelector:@selector(detach:)])
+	{
+		ERRLog(@"WebInspector doesn't respond to '-detach:'!");
+		
+		return;
+	}
+	
+	[inspector performSelector:@selector(showConsole:) withObject:aploWebView];
+	
+	if(![inspector respondsToSelector:@selector(showConsole:)])
+	{
+		ERRLog(@"WebInspector doesn't respond to '-showConsole:'!");
+		
+		return;
+	}
+	
+	[inspector performSelector:@selector(showConsole:) withObject:aploWebView];
 }
 
 //*****************************************************************************
@@ -466,6 +553,11 @@
 	
 	[self terminateParser];
 	
+	if([self.taskEnvironment objectForKey:@"APLO_PREVIEW_HTML_FILE"])
+	{
+		return;
+	}
+	
 	NSString	*parserPath=[self parserPath];
 	NSPipe		*myPipe=[NSPipe pipe];
 	NSPipe		*myErrPipe=[NSPipe pipe];
@@ -473,11 +565,6 @@
 	logParser=[[NSTask alloc]init];
 	
 	[logParser setLaunchPath:parserPath];
-	[logParser setArguments:[NSArray arrayWithObjects:
-		@"Forge",
-		@"/Users/gerti/Clients/Harte-Hanks/Projects/AnvilSuite2",
-		nil
-	]];
 	
 	if(taskEnvironment)
 	{
@@ -609,6 +696,7 @@
 //*****************************************************************************
 // Synthesized Accessors
 //*****************************************************************************
+@synthesize previewPath;
 @synthesize taskEnvironment;
 @synthesize searchField;
 @synthesize searchString;

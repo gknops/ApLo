@@ -27,6 +27,8 @@
 	//VPROP(assign) BOOL				searchButtonsEnabled;
 	
 	PROP(retain) NSDictionary			*taskEnvironment;
+	
+	PROP(copy) NSString					*previewPath;
 }
 @property (assign) IBOutlet	NSSearchField	*searchField;
 @property (assign) IBOutlet	WebView			*aploWebView;
@@ -35,6 +37,7 @@
 @property (assign)				NSInteger		numMatches;
 @property (assign)				BOOL			searchButtonsEnabled;
 @property (retain)				NSDictionary	*taskEnvironment;
+@property (copy)				NSString		*previewPath;
 
 //*****************************************************************************
 // Factory methods
@@ -86,6 +89,8 @@
 - (NSString *)getLineFromBuffer;
 - (void)deleteApLoFileIfRequested:(NSString *)path;
 - (BOOL)relaunchWithEnvironment:(NSDictionary *)newEnv filename:(NSString *)filename;
+- (BOOL)showPreview;
+- (void)showWebInspector;
 
 //*****************************************************************************
 // WebFrameLoadDelegate Protocol

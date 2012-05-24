@@ -11,6 +11,27 @@
 @implementation ApLoAppDelegate
 
 //*****************************************************************************
+// Class methods
+//*****************************************************************************
++ (void)initialize {
+	
+	//
+	// +initialize might get called twice when KVO is in use (eg for NSKVONotifying_ApLoAppDelegate)!
+	// 
+	if(self!=[ApLoAppDelegate class]) return;
+	
+	//  
+	// Register initial defaults
+	// 
+	NSMutableDictionary *defaults=[[NSMutableDictionary alloc]init];
+	
+	[defaults setObject:[NSNumber numberWithBool:YES] forKey:@"WebKitDeveloperExtras"];
+	
+	[[NSUserDefaults standardUserDefaults]registerDefaults:defaults];
+	[defaults release];
+}
+
+//*****************************************************************************
 // NSApplicationDelegate Protocol
 //*****************************************************************************
 - (BOOL)applicationShouldOpenUntitledFile:(NSApplication *)sender {
