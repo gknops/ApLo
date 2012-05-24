@@ -251,7 +251,7 @@
 	
 	if(self.previewPath)
 	{
-		[self showPreview];
+		[self showPreview:NO];
 		
 		return;
 	}
@@ -427,7 +427,7 @@
 	
 	if(self.previewPath)
 	{
-		return [self showPreview];
+		return [self showPreview:YES];
 	}
 	
 	NSString	*s=[self.taskEnvironment objectForKey:@"APLO_KEEP_WINDOW_CONTENTS"];
@@ -441,17 +441,17 @@
 	
 	return YES;
 }
-- (BOOL)showPreview {
+- (BOOL)showPreview:(BOOL)isReload {
 	
 	[[aploWebView mainFrame]
 		loadRequest:[NSURLRequest requestWithURL:[NSURL fileURLWithPath:self.previewPath]]
 	];
 	
-	[self showWebInspector];
+	[self showWebInspector:isReload];
 	
 	return YES;
 }
-- (void)showWebInspector {
+- (void)showWebInspector:(BOOL)isReload {
 	
 	Class	inspectorClass=NSClassFromString(@"WebInspector");
 	
@@ -487,16 +487,19 @@
 		return;
 	}
 	
-	[inspector performSelector:@selector(showConsole:) withObject:aploWebView];
+	[inspector performSelector:@selector(detach:) withObject:aploWebView];
 	
-	if(![inspector respondsToSelector:@selector(showConsole:)])
+	if(!isReload)
 	{
-		ERRLog(@"WebInspector doesn't respond to '-showConsole:'!");
+		if(![inspector respondsToSelector:@selector(showConsole:)])
+		{
+			ERRLog(@"WebInspector doesn't respond to '-showConsole:'!");
+			
+			return;
+		}
 		
-		return;
+		[inspector performSelector:@selector(showConsole:) withObject:aploWebView];
 	}
-	
-	[inspector performSelector:@selector(showConsole:) withObject:aploWebView];
 }
 
 //*****************************************************************************

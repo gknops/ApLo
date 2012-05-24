@@ -89,8 +89,8 @@
 - (NSString *)getLineFromBuffer;
 - (void)deleteApLoFileIfRequested:(NSString *)path;
 - (BOOL)relaunchWithEnvironment:(NSDictionary *)newEnv filename:(NSString *)filename;
-- (BOOL)showPreview;
-- (void)showWebInspector;
+- (BOOL)showPreview:(BOOL)isReload;
+- (void)showWebInspector:(BOOL)isReload;
 
 //*****************************************************************************
 // WebFrameLoadDelegate Protocol
@@ -119,6 +119,7 @@
 //*****************************************************************************
 // Synthesized Accessors
 //*****************************************************************************
+// @synthesize previewPath;
 // @synthesize taskEnvironment;
 // @synthesize searchField;
 // @synthesize searchString;
