@@ -443,24 +443,9 @@
 }
 - (BOOL)showPreview {
 	
-	NSStringEncoding	stringEncoding;
-	NSError				*error;
-	NSString			*html=[NSString
-		stringWithContentsOfFile:self.previewPath
-		usedEncoding:&stringEncoding
-		error:&error
+	[[aploWebView mainFrame]
+		loadRequest:[NSURLRequest requestWithURL:[NSURL fileURLWithPath:self.previewPath]]
 	];
-	
-	if(!html)
-	{
-		ERRLog(@"Error loading html from file '%@': %@",self.previewPath,error);
-		
-		return NO;
-	}
-	
-	NSURL	*base=[NSURL fileURLWithPath:[self.previewPath stringByDeletingLastPathComponent]];
-	
-	[[aploWebView mainFrame]loadHTMLString:html baseURL:base];
 	
 	[self showWebInspector];
 	
