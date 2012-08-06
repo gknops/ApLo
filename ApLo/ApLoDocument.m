@@ -430,6 +430,8 @@
 		return [self showPreview:YES];
 	}
 	
+	[[aploWebView window]makeKeyWindow];
+	
 	NSString	*s=[self.taskEnvironment objectForKey:@"APLO_KEEP_WINDOW_CONTENTS"];
 	
 	if(!s || ![s intValue])
