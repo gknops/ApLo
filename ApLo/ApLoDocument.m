@@ -110,10 +110,12 @@
 	DOMDocument			*doc=[[aploWebView mainFrame]DOMDocument];
 	DOMHTMLBodyElement	*bodyNode=(DOMHTMLBodyElement *)[doc body];
 	
-	while(bodyNode.lastChild)
-	{
-		[bodyNode removeChild:bodyNode.lastChild];
-	}
+	bodyNode.innerHTML=@"";
+	
+	// while(bodyNode.lastChild)
+	// {
+	// 	[bodyNode removeChild:bodyNode.lastChild];
+	// }
 }
 
 //*****************************************************************************
